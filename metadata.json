@@ -1,0 +1,6 @@
+{
+  "name": "Banerekorder Trondheim Stadion",
+  "description": "En oversikt over banerekorder i friidrett for Trondheim Stadion, med søk- og filtreringsfunksjon etter kjønn og øvelser.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
