@@ -93,7 +93,7 @@
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0 {
+      0% {
         transform: scale(0.95);
         box-shadow: 0 0 0 0 rgba(243, 139, 33, 0.7);
       }
@@ -106,13 +106,32 @@
         box-shadow: 0 0 0 0 rgba(243, 139, 33, 0);
       }
     }
+
+    /* Badge for ny rekord med rød farge og blinkeeffekt */
+    .badge-ny {
+      background-color: #dc2626; /* Knallrød farge */
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      display: inline-block;
+      vertical-align: middle;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%   { opacity: 1; }   /* Fullt synlig */
+      50%  { opacity: 0.2; } /* Nesten usynlig/gjennomsiktig */
+      100% { opacity: 1; }   /* Fullt synlig igjen */
+    }
   </style>
 </head>
 <body class="bg-brandGray text-gray-900 font-sans min-h-screen antialiased flex flex-col">
 
   <!-- Header Banner -->
   <header class="track-bg text-white py-10 px-4 md:px-8 border-b-4 border-orangeWarm shadow-md relative overflow-hidden">
-    <!-- Curved Athletics Track lanes background design -->
     <div class="absolute inset-0 opacity-10 pointer-events-none">
       <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
         <path fill="none" stroke="#ffffff" stroke-width="3" d="M0,80 C240,160 480,240 720,240 C960,240 1200,160 1440,80"></path>
@@ -126,7 +145,6 @@
       <!-- Title Block -->
       <div class="flex items-start gap-4">
         <div class="bg-orangeWarm p-3 rounded-xl shadow-lg mt-1 flex-shrink-0">
-          <!-- Athletic flame/runner custom svg icon -->
           <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
@@ -293,7 +311,7 @@
     <!-- Main Content Container: Table or Cards -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col flex-grow">
       
-      <!-- Desktop Table (hidden on mobile, shown on md+) -->
+      <!-- Desktop Table -->
       <div class="hidden md:block overflow-x-auto custom-scroll">
         <table class="w-full text-left border-collapse">
           <thead>
@@ -312,7 +330,7 @@
         </table>
       </div>
 
-      <!-- Mobile Card List (hidden on md+, shown on mobile) -->
+      <!-- Mobile Card List -->
       <div id="records-card-list" class="block md:hidden divide-y divide-gray-100">
         <!-- Dynamic Cards go here -->
       </div>
@@ -349,6 +367,7 @@
           <h2 class="text-lg font-bold text-tealDeep">Trondheim Stadion, Øya</h2>
           <p class="text-sm text-gray-600 mt-1 max-w-xl">
             Trondheim Stadion på Øya har en rik friidrettshistorie og er hovedarenaen for NM i friidrett i 2026 (NM2026). Flere av rekordene stammer fra legendariske stevner på 1950- og 60-tallet.
+          </p>
         </div>
       </div>
       <div class="flex flex-col gap-2 w-full md:w-auto">
@@ -505,7 +524,6 @@
 
   <!-- State & Dynamic rendering scripts -->
   <script>
-    // Extremely compact format to conserve tokens and transfer speed. Map dynamically in JS.
     // Schema: ['Category', 'Event', 'Result', 'Name', 'Club', 'Date', 'Type']
     const compactRecords = [
       // MENN
@@ -580,18 +598,28 @@
       ['Damer', '7-kamp', '4995', 'Frida Thorsås (15,62-1,57-12,29-26,41/5,52-32,94-2,17,91)', 'Urædd Friidrett', '11/12.09.10', 'mangekamp']
     ];
 
-    // Decode to clean objects
-    const keys = ['category', 'event', 'result', 'name', 'club', 'date', 'type'];
+    // Decode to clean objects and process "ny" / "nm2026" tag automatically
+    const keys = ['category', 'event', 'rawResult', 'name', 'club', 'date', 'type'];
     const records = compactRecords.map((r, i) => {
       const recObj = { id: `rec-${i}` };
       keys.forEach((k, idx) => recObj[k] = r[idx]);
+
+      // Check if result contains "ny" or "nm2026"
+      const hasNyTag = /\b(ny|nm2026)\b/i.test(recObj.rawResult);
+      const cleanMark = recObj.rawResult.replace(/\b(ny|nm2026)\b/gi, '').trim();
+
+      recObj.cleanResult = cleanMark;
+      recObj.result = hasNyTag 
+        ? `${cleanMark} <span class="badge-ny">NM2026</span>` 
+        : cleanMark;
+
       return recObj;
     });
 
     // Active state
     let searchFilter = '';
-    let genderFilter = 'alle'; // 'alle', 'menn', 'damer'
-    let typeFilter = 'alle'; // 'alle', 'løp', 'teknisk', 'stafett', 'mangekamp'
+    let genderFilter = 'alle';
+    let typeFilter = 'alle';
     let selectedRecord = null;
 
     // Elements
@@ -636,11 +664,8 @@
       const tabs = document.querySelectorAll('.gender-tab');
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          tabs.forEach(t => {
-            t.classList.remove('active');
-          });
+          tabs.forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
-          
           genderFilter = tab.getAttribute('data-value');
           renderRecords();
         });
@@ -676,11 +701,9 @@
       searchFilter = '';
       clearSearchBtn.classList.add('hidden');
 
-      // Reset Gender
       const firstTab = document.querySelector('.gender-tab[data-value="alle"]');
       if (firstTab) firstTab.click();
 
-      // Reset Type
       const firstPill = document.querySelector('.type-pill[data-type="alle"]');
       if (firstPill) firstPill.click();
 
@@ -691,6 +714,15 @@
     // Match helper for highlighting search matches
     function highlightText(text, search) {
       if (!search) return text;
+      
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = text;
+      const plainText = tempDiv.innerText;
+
+      if (!plainText.toLowerCase().includes(search.toLowerCase())) {
+        return text;
+      }
+
       const regex = new RegExp(`(${escapeRegExp(search)})`, 'gi');
       return text.replace(regex, `<mark class="bg-orangeWarm/25 text-gray-900 font-semibold px-0.5 rounded">$1</mark>`);
     }
@@ -701,27 +733,22 @@
 
     // Primary Render
     function renderRecords() {
-      // Filter list
       const filtered = records.filter(rec => {
-        // Gender matching
         if (genderFilter !== 'alle') {
           if (genderFilter === 'menn' && rec.category !== 'Menn') return false;
           if (genderFilter === 'damer' && rec.category !== 'Damer') return false;
         }
 
-        // Type matching
         if (typeFilter !== 'alle' && rec.type !== typeFilter) return false;
 
-        // Search matching
         if (searchFilter) {
-          const matchTarget = `${rec.event} ${rec.result} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
-          if (!matchTarget.includes(searchFilter)) return false;
+          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
+          if (!cleanTarget.includes(searchFilter)) return false;
         }
 
         return true;
       });
 
-      // Update counters
       filteredCountText.textContent = filtered.length;
 
       if (filtered.length === 0) {
@@ -733,16 +760,13 @@
 
       emptyState.classList.add('hidden');
 
-      // Render Desktop Rows
       let rowsHTML = '';
-      // Render Mobile Cards
       let cardsHTML = '';
 
       filtered.forEach((rec, idx) => {
         const isMen = rec.category === 'Menn';
         const genderColor = isMen ? 'tag-menn border-transparent' : 'tag-damer border-transparent';
         
-        // Dynamic event icons / labels
         let typeBadge = '';
         if (rec.type === 'løp') {
           typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md border border-blue-100 uppercase">Løp</span>`;
@@ -754,10 +778,9 @@
           typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-amber-50 text-amber-700 font-bold rounded-md border border-amber-100 uppercase">Mangekamp</span>`;
         }
 
-        // Row highlighting and classes
         const zebraBg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/40';
 
-        // 1. Build Desktop Row HTML
+        // Desktop Row HTML
         rowsHTML += `
           <tr 
             onclick="openDetailModal('${rec.id}')" 
@@ -786,7 +809,7 @@
           </tr>
         `;
 
-        // 2. Build Mobile Card HTML
+        // Mobile Card HTML
         cardsHTML += `
           <div 
             onclick="openDetailModal('${rec.id}')" 
@@ -826,7 +849,6 @@
 
       selectedRecord = rec;
 
-      // Update Modal content
       document.getElementById('modal-event').innerHTML = rec.event;
       document.getElementById('modal-result').innerHTML = rec.result;
       document.getElementById('modal-athlete').innerHTML = rec.name;
@@ -841,13 +863,11 @@
         badge.className = "px-2.5 py-1 text-[10px] font-extrabold uppercase bg-rose-500 text-white tracking-widest rounded-full";
       }
 
-      // Format event type readable description
       const typeTag = document.getElementById('modal-type-tag');
       typeTag.textContent = rec.type === 'løp' ? 'Løpsøvelse' : 
-                           rec.type === 'teknisk' ? 'Teknisk øvelse (Kast/Hopp)' :
-                           rec.type === 'stafett' ? 'Stafett' : 'Mangekamp (Sammensatt)';
+                             rec.type === 'teknisk' ? 'Teknisk øvelse (Kast/Hopp)' :
+                             rec.type === 'stafett' ? 'Stafett' : 'Mangekamp (Sammensatt)';
 
-      // Calculate elapsed age in years relative to 2026
       const ageLabel = document.getElementById('modal-age');
       const historicalAlert = document.getElementById('modal-historical-alert');
       
@@ -855,7 +875,7 @@
         const parts = rec.date.split('.');
         let year = parseInt(parts[2]);
         if (year < 100) {
-          year += (year > 30 ? 1900 : 2000); // 2-digit year conversion logic
+          year += (year > 30 ? 1900 : 2000);
         }
         const age = 2026 - year;
         
@@ -865,7 +885,6 @@
           ageLabel.textContent = `Satt i ${year} (for ${age} år siden)`;
         }
 
-        // Highlight historical legendary records (older than 50 years)
         if (age >= 50) {
           historicalAlert.classList.remove('hidden');
         } else {
@@ -876,7 +895,6 @@
         historicalAlert.classList.add('hidden');
       }
 
-      // Show Modal
       detailModal.classList.remove('opacity-0', 'pointer-events-none');
       modalContent.classList.remove('translate-y-full', 'md:translate-y-4');
       modalContent.classList.add('translate-y-0');
@@ -893,7 +911,7 @@
     function copyRecordText() {
       if (!selectedRecord) return;
       const rec = selectedRecord;
-      const textToCopy = `Banerekord Trondheim Stadion (${rec.category}): ${rec.event} - ${rec.result} satt av ${rec.name} (${rec.club}) den ${rec.date}.`;
+      const textToCopy = `Banerekord Trondheim Stadion (${rec.category}): ${rec.event} - ${rec.cleanResult} satt av ${rec.name} (${rec.club}) den ${rec.date}.`;
       
       navigator.clipboard.writeText(textToCopy).then(() => {
         showToast('Rekorddata ble kopiert!');
@@ -914,7 +932,6 @@
 
     // Export current selection as CSV
     function exportCSV() {
-      // Find filtered selection
       const activeFiltered = records.filter(rec => {
         if (genderFilter !== 'alle') {
           if (genderFilter === 'menn' && rec.category !== 'Menn') return false;
@@ -922,8 +939,8 @@
         }
         if (typeFilter !== 'alle' && rec.type !== typeFilter) return false;
         if (searchFilter) {
-          const matchTarget = `${rec.event} ${rec.result} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
-          if (!matchTarget.includes(searchFilter)) return false;
+          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
+          if (!cleanTarget.includes(searchFilter)) return false;
         }
         return true;
       });
@@ -931,7 +948,7 @@
       let csvContent = "data:text/csv;charset=utf-8,Kategori;Øvelse;Resultat;Navn;Klubb/Land;Når\r\n";
       
       activeFiltered.forEach(rec => {
-        const row = [rec.category, rec.event, rec.result, rec.name, rec.club, rec.date]
+        const row = [rec.category, rec.event, rec.cleanResult, rec.name, rec.club, rec.date]
           .map(val => `"${val.replace(/"/g, '""')}"`)
           .join(";");
         csvContent += row + "\r\n";
@@ -956,13 +973,23 @@
         }
         if (typeFilter !== 'alle' && rec.type !== typeFilter) return false;
         if (searchFilter) {
-          const matchTarget = `${rec.event} ${rec.result} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
-          if (!matchTarget.includes(searchFilter)) return false;
+          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
+          if (!cleanTarget.includes(searchFilter)) return false;
         }
         return true;
       });
 
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeFiltered, null, 2));
+      const cleanedJSON = activeFiltered.map(rec => ({
+        category: rec.category,
+        event: rec.event,
+        result: rec.cleanResult,
+        name: rec.name,
+        club: rec.club,
+        date: rec.date,
+        type: rec.type
+      }));
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cleanedJSON, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
       downloadAnchor.setAttribute("download", `banerekorder_trondheim_stadion_${genderFilter}_${typeFilter}.json`);
