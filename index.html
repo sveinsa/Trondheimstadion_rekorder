@@ -74,7 +74,7 @@
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(243, 139, 33, 0.7); }
       70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(243, 139, 33, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(243, 139, 33, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(243, 139, 33, 0.7); }
     }
 
     .badge-ny {
@@ -99,7 +99,7 @@
 <body class="bg-brandGray text-gray-900 font-sans antialiased relative">
 
   <!-- Header Banner -->
-  <header class="track-bg text-white py-8 px-4 md:px-8 border-b-4 border-orangeWarm shadow-md relative overflow-hidden">
+  <header class="track-bg text-white py-10 px-4 md:px-8 border-b-4 border-orangeWarm shadow-md relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 pointer-events-none">
       <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
         <path fill="none" stroke="#ffffff" stroke-width="3" d="M0,80 C240,160 480,240 720,240 C960,240 1200,160 1440,80"></path>
@@ -109,36 +109,37 @@
       </svg>
     </div>
 
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between relative z-10 gap-5">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between relative z-10 gap-6">
       <div>
-        <h1 id="app-title" class="text-2xl md:text-4xl font-extrabold tracking-tight">Banerekorder Trondheim Stadion</h1>
-        <p id="app-subtitle" class="text-teal-100 font-medium mt-1 flex items-center gap-2 text-sm">
+        <h1 id="app-title" class="text-3xl md:text-4xl font-extrabold tracking-tight">Banerekorder Trondheim Stadion</h1>
+        <p id="app-subtitle" class="text-teal-100 font-medium mt-1.5 flex items-center gap-2">
           <span class="inline-block w-2.5 h-2.5 bg-orangeWarm rounded-full pulse-dot"></span>
           Oppdatert: 22.07.2026
         </p>
       </div>
 
-      <!-- Kompakt grid for mobil med klikkbare dato-bokser -->
-      <div class="grid grid-cols-3 gap-1.5 sm:gap-3 w-full md:w-auto">
-        <div class="bg-white/10 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
-          <span class="text-[9px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block">Rekorder totalt</span>
+      <div class="grid grid-cols-3 gap-2 sm:gap-3 w-full md:w-auto">
+        <div class="bg-white/10 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-white/10">
+          <span class="text-[10px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block">Rekorder totalt</span>
           <span id="stat-total" class="text-lg sm:text-2xl font-bold block mt-0.5 sm:mt-1">-</span>
         </div>
-
-        <div id="card-oldest" class="bg-white/10 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-white/10 min-w-0 transition-all hover:bg-white/20 active:scale-95 cursor-pointer">
-          <span class="text-[9px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block flex items-center justify-between">
-            Eldste
-            <svg class="w-2.5 h-2.5 text-orangeWarm" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        
+        <!-- Klikkbar eldste rekord -->
+        <div id="stat-oldest-card" onclick="openStatRecord('oldest', event)" class="bg-white/10 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-white/10 cursor-pointer hover:bg-white/20 transition-all active:scale-95">
+          <span class="text-[10px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block flex items-center justify-between">
+            Eldste rekord
+            <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </span>
-          <span id="stat-oldest" class="text-[10px] sm:text-base font-bold font-mono block mt-0.5 sm:mt-1 whitespace-nowrap text-white">-</span>
+          <span id="stat-oldest" class="text-xs sm:text-base font-bold font-mono block mt-0.5 sm:mt-1 truncate">-</span>
         </div>
 
-        <div id="card-newest" class="bg-white/10 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-white/10 min-w-0 transition-all hover:bg-white/20 active:scale-95 cursor-pointer">
-          <span class="text-[9px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block flex items-center justify-between">
-            Nyeste
-            <svg class="w-2.5 h-2.5 text-orangeWarm" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        <!-- Klikkbar nyeste rekord -->
+        <div id="stat-newest-card" onclick="openStatRecord('newest', event)" class="bg-white/10 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-white/10 cursor-pointer hover:bg-white/20 transition-all active:scale-95">
+          <span class="text-[10px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block flex items-center justify-between">
+            Nyeste rekord
+            <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </span>
-          <span id="stat-newest" class="text-[10px] sm:text-base font-bold font-mono block mt-0.5 sm:mt-1 whitespace-nowrap text-white">-</span>
+          <span id="stat-newest" class="text-xs sm:text-base font-bold font-mono block mt-0.5 sm:mt-1 truncate">-</span>
         </div>
       </div>
     </div>
@@ -1004,6 +1005,8 @@
     let genderFilter = 'alle';
     let typeFilter = 'alle';
     let selectedRecord = null;
+    let oldestRecordObj = null;
+    let newestRecordObj = null;
 
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search-btn');
@@ -1054,8 +1057,6 @@
       document.getElementById('tab-menn').textContent = `Menn (${menn})`;
       document.getElementById('tab-kvinner').textContent = `Kvinner (${kvinner})`;
 
-      let oldestRec = null;
-      let newestRec = null;
       let minTimestamp = Infinity;
       let maxTimestamp = -Infinity;
 
@@ -1065,22 +1066,23 @@
           const time = d.getTime();
           if (time < minTimestamp) {
             minTimestamp = time;
-            oldestRec = r;
+            oldestRecordObj = r;
           }
           if (time > maxTimestamp) {
             maxTimestamp = time;
-            newestRec = r;
+            newestRecordObj = r;
           }
         }
       });
 
-      if (oldestRec) {
-        document.getElementById('stat-oldest').textContent = oldestRec.date;
-        document.getElementById('card-oldest').onclick = (e) => openDetailModal(oldestRec.id, e);
-      }
-      if (newestRec) {
-        document.getElementById('stat-newest').textContent = newestRec.date;
-        document.getElementById('card-newest').onclick = (e) => openDetailModal(newestRec.id, e);
+      if (oldestRecordObj) document.getElementById('stat-oldest').textContent = oldestRecordObj.date;
+      if (newestRecordObj) document.getElementById('stat-newest').textContent = newestRecordObj.date;
+    }
+
+    function openStatRecord(which, evt) {
+      const targetObj = which === 'oldest' ? oldestRecordObj : newestRecordObj;
+      if (targetObj) {
+        openDetailModal(targetObj.id, evt);
       }
     }
 
