@@ -99,7 +99,7 @@
 <body class="bg-brandGray text-gray-900 font-sans antialiased relative">
 
   <!-- Header Banner -->
-  <header class="track-bg text-white py-10 px-4 md:px-8 border-b-4 border-orangeWarm shadow-md relative overflow-hidden">
+  <header class="track-bg text-white py-8 px-4 md:px-8 border-b-4 border-orangeWarm shadow-md relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 pointer-events-none">
       <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
         <path fill="none" stroke="#ffffff" stroke-width="3" d="M0,80 C240,160 480,240 720,240 C960,240 1200,160 1440,80"></path>
@@ -109,27 +109,28 @@
       </svg>
     </div>
 
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between relative z-10 gap-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between relative z-10 gap-5">
       <div>
-        <h1 id="app-title" class="text-3xl md:text-4xl font-extrabold tracking-tight">Banerekorder Trondheim Stadion</h1>
-        <p id="app-subtitle" class="text-teal-100 font-medium mt-1.5 flex items-center gap-2">
+        <h1 id="app-title" class="text-2xl md:text-4xl font-extrabold tracking-tight">Banerekorder Trondheim Stadion</h1>
+        <p id="app-subtitle" class="text-teal-100 font-medium mt-1 flex items-center gap-2 text-sm">
           <span class="inline-block w-2.5 h-2.5 bg-orangeWarm rounded-full pulse-dot"></span>
           Oppdatert: 22.07.2026
         </p>
       </div>
 
-      <div class="grid grid-cols-3 gap-3 w-full md:w-auto">
-        <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 min-w-[120px]">
-          <span class="text-xs text-teal-100 uppercase font-semibold tracking-wider block">Rekorder totalt</span>
-          <span id="stat-total" class="text-2xl font-bold block mt-1">-</span>
+      <!-- Justert grid for mobil så datoene ikke blir kuttet -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 w-full md:w-auto">
+        <div class="col-span-2 sm:col-span-1 bg-white/10 backdrop-blur-md rounded-xl p-2.5 sm:p-3 border border-white/10 flex sm:block items-center justify-between">
+          <span class="text-[11px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block">Rekorder totalt</span>
+          <span id="stat-total" class="text-xl sm:text-2xl font-bold block sm:mt-1">-</span>
         </div>
-        <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 min-w-[120px]">
-          <span class="text-xs text-teal-100 uppercase font-semibold tracking-wider block">Eldste rekord</span>
-          <span id="stat-oldest" class="text-base md:text-lg font-bold font-mono block mt-1 truncate">-</span>
+        <div class="bg-white/10 backdrop-blur-md rounded-xl p-2.5 sm:p-3 border border-white/10">
+          <span class="text-[11px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block">Eldste rekord</span>
+          <span id="stat-oldest" class="text-sm sm:text-base font-bold font-mono block mt-1 whitespace-nowrap">-</span>
         </div>
-        <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 min-w-[120px]">
-          <span class="text-xs text-teal-100 uppercase font-semibold tracking-wider block">Nyeste rekord</span>
-          <span id="stat-newest" class="text-base md:text-lg font-bold font-mono block mt-1 truncate">-</span>
+        <div class="bg-white/10 backdrop-blur-md rounded-xl p-2.5 sm:p-3 border border-white/10">
+          <span class="text-[11px] sm:text-xs text-teal-100 uppercase font-semibold tracking-wider block">Nyeste rekord</span>
+          <span id="stat-newest" class="text-sm sm:text-base font-bold font-mono block mt-1 whitespace-nowrap">-</span>
         </div>
       </div>
     </div>
@@ -1022,6 +1023,17 @@
       sendHeightToParent();
     });
 
+    function parseDateObj(dateStr) {
+      if (!dateStr) return null;
+      const match = dateStr.match(/(\d{1,2})[\.\/](\d{1,2})[\.\/](\d{2,4})/);
+      if (!match) return null;
+      let day = parseInt(match[1], 10);
+      let month = parseInt(match[2], 10) - 1;
+      let year = parseInt(match[3], 10);
+      if (year < 100) year += (year > 30 ? 1900 : 2000);
+      return new Date(year, month, day);
+    }
+
     function updateOverviewStats() {
       const menn = records.filter(r => r.category === 'Menn').length;
       const kvinner = records.filter(r => r.category === 'Kvinner').length;
@@ -1034,29 +1046,28 @@
       document.getElementById('tab-menn').textContent = `Menn (${menn})`;
       document.getElementById('tab-kvinner').textContent = `Kvinner (${kvinner})`;
 
-      let oldestDate = "";
-      let newestDate = "";
-      let oldestYear = 9999;
-      let newestYear = 0;
+      let oldestRecord = null;
+      let newestRecord = null;
+      let minTimestamp = Infinity;
+      let maxTimestamp = -Infinity;
 
       records.forEach(r => {
-        const parts = r.date.split('.');
-        if (parts.length >= 3) {
-          let y = parseInt(parts[2], 10);
-          if (y < 100) y += (y > 30 ? 1900 : 2000);
-          if (y < oldestYear) {
-            oldestYear = y;
-            oldestDate = r.date;
+        const d = parseDateObj(r.date);
+        if (d) {
+          const time = d.getTime();
+          if (time < minTimestamp) {
+            minTimestamp = time;
+            oldestRecord = r.date;
           }
-          if (y > newestYear) {
-            newestYear = y;
-            newestDate = r.date;
+          if (time > maxTimestamp) {
+            maxTimestamp = time;
+            newestRecord = r.date;
           }
         }
       });
 
-      document.getElementById('stat-oldest').textContent = oldestDate || "-";
-      document.getElementById('stat-newest').textContent = newestDate || "-";
+      if (oldestRecord) document.getElementById('stat-oldest').textContent = oldestRecord;
+      if (newestRecord) document.getElementById('stat-newest').textContent = newestRecord;
     }
 
     function setupEventListeners() {
