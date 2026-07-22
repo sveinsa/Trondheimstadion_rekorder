@@ -31,85 +31,54 @@
   </script>
 
   <style type="text/css">
-    /* Extra animations & custom styles */
+    /* Sørger for at koden utvider seg fritt i høyden i Squarespace/iframe */
+    html, body {
+      height: auto !important;
+      overflow-y: visible !important;
+    }
+
     .track-bg {
       background-color: #07688C;
       background-image: radial-gradient(circle at 100% 150%, rgba(243, 139, 33, 0.15) 24%, transparent 24%),
                         radial-gradient(circle at 0% -50%, rgba(255, 255, 255, 0.08) 30%, transparent 30%);
     }
-    
     .record-card {
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
     .record-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 20px -5px rgba(7, 104, 140, 0.1);
     }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 
-    /* Custom scrollbar for table matching the theme */
-    .custom-scroll::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .custom-scroll::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background: #e2e8f0;
-      border-radius: 10px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb:hover {
-      background: #cbd5e1;
-    }
-
-    /* Active styling for gender tabs from the theme */
     .gender-tab.active {
       background-color: #F38B21;
       color: white !important;
       box-shadow: 0 2px 4px rgba(243, 139, 33, 0.3);
     }
-    .gender-tab:not(.active):hover {
-      background-color: #e5e7eb;
-    }
+    .gender-tab:not(.active):hover { background-color: #e5e7eb; }
 
-    /* Alternating table rows and hovers matching theme */
     tbody tr:nth-child(even) { background-color: #F9FAFB; }
     tbody tr:hover { background-color: #F3F8FA !important; }
 
-    /* Category Tag Colors matching theme */
-    .tag-menn {
-      color: #07688C;
-      background: #E1F0F7;
-    }
-    .tag-kvinner {
-      color: #C026D3;
-      background: #FDF4FF;
-    }
+    .tag-menn { color: #07688C; background: #E1F0F7; }
+    .tag-kvinner { color: #C026D3; background: #FDF4FF; }
 
-    /* Pulse dot */
     .pulse-dot {
       box-shadow: 0 0 0 0 rgba(243, 139, 33, 0.7);
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(243, 139, 33, 0.7);
-      }
-      70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 8px rgba(243, 139, 33, 0);
-      }
-      100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(243, 139, 33, 0);
-      }
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(243, 139, 33, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(243, 139, 33, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(243, 139, 33, 0); }
     }
 
-    /* Badge for ny rekord med rød farge og blinkeeffekt */
     .badge-ny {
-      background-color: #dc2626; /* Knallrød farge */
+      background-color: #dc2626;
       color: #ffffff;
       font-size: 0.75rem;
       font-weight: bold;
@@ -120,15 +89,14 @@
       vertical-align: middle;
       animation: blink 1s infinite;
     }
-
     @keyframes blink {
-      0%   { opacity: 1; }   /* Fullt synlig */
-      50%  { opacity: 0.2; } /* Nesten usynlig/gjennomsiktig */
-      100% { opacity: 1; }   /* Fullt synlig igjen */
+      0%   { opacity: 1; }
+      50%  { opacity: 0.2; }
+      100% { opacity: 1; }
     }
   </style>
 </head>
-<body class="bg-brandGray text-gray-900 font-sans min-h-screen antialiased flex flex-col">
+<body class="bg-brandGray text-gray-900 font-sans antialiased">
 
   <!-- Header Banner -->
   <header class="track-bg text-white py-10 px-4 md:px-8 border-b-4 border-orangeWarm shadow-md relative overflow-hidden">
@@ -142,51 +110,39 @@
     </div>
 
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between relative z-10 gap-6">
-      <!-- Title Block -->
-      <div class="flex items-start gap-4">
-        <div class="bg-orangeWarm p-3 rounded-xl shadow-lg mt-1 flex-shrink-0">
-          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <div>
-          <h1 id="app-title" class="text-3xl md:text-4xl font-extrabold tracking-tight">Banerekorder Trondheim Stadion</h1>
-          <p id="app-subtitle" class="text-teal-100 font-medium mt-1.5 flex items-center gap-2">
-            <span class="inline-block w-2.5 h-2.5 bg-orangeWarm rounded-full pulse-dot"></span>
-            Oppdatert: 19.07.2026
-          </p>
-        </div>
+      <div>
+        <h1 id="app-title" class="text-3xl md:text-4xl font-extrabold tracking-tight">Banerekorder Trondheim Stadion</h1>
+        <p id="app-subtitle" class="text-teal-100 font-medium mt-1.5 flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 bg-orangeWarm rounded-full pulse-dot"></span>
+          Oppdatert: 22.07.2026
+        </p>
       </div>
 
-      <!-- General Statistics Bento Overview -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full md:w-auto">
         <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 min-w-[130px]">
           <span class="text-xs text-teal-100 uppercase font-semibold tracking-wider block">Rekorder totalt</span>
-          <span id="stat-total" class="text-2xl font-bold block mt-1">67</span>
+          <span id="stat-total" class="text-2xl font-bold block mt-1">-</span>
         </div>
         <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 min-w-[130px]">
           <span class="text-xs text-teal-100 uppercase font-semibold tracking-wider block">Menn / Kvinner</span>
-          <span id="stat-ratio" class="text-2xl font-bold block mt-1">34 / 33</span>
+          <span id="stat-ratio" class="text-2xl font-bold block mt-1">- / -</span>
         </div>
         <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 min-w-[130px]">
           <span class="text-xs text-teal-100 uppercase font-semibold tracking-wider block">Eldste rekord</span>
-          <span class="text-xl font-bold block mt-1 truncate" title="1950 (60m Kvinner)">1950</span>
+          <span id="stat-oldest" class="text-xl font-bold block mt-1 truncate">-</span>
         </div>
         <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 min-w-[130px]">
           <span class="text-xs text-teal-100 uppercase font-semibold tracking-wider block">Nyeste rekord</span>
-          <span class="text-xl font-bold block mt-1 truncate" title="2025 (1500m/5000m Herrer)">2025</span>
+          <span id="stat-newest" class="text-xl font-bold block mt-1 truncate">-</span>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Interactive Search and Filter Controls -->
-  <main class="max-w-7xl w-full mx-auto p-4 md:p-8 flex-grow flex flex-col gap-6">
+  <!-- Main Content -->
+  <main class="max-w-7xl w-full mx-auto p-4 md:p-8 flex flex-col gap-6">
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col gap-5">
-      
-      <!-- Search row & Export options -->
       <div class="flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center">
-        <!-- Search bar -->
         <div class="relative flex-grow">
           <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -199,34 +155,21 @@
             placeholder="Søk på øvelse, utøver, klubb, land eller dato..." 
             class="w-full pl-11 pr-10 py-3 bg-gray-100 border-2 border-transparent rounded-full focus:outline-none focus:bg-white focus:border-orangeWarm text-sm font-medium transition-all"
           >
-          <button 
-            id="clear-search-btn" 
-            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 hidden"
-            title="Tøm søk"
-          >
+          <button id="clear-search-btn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 hidden">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
  
-        <!-- Export tools -->
         <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <button 
-            onclick="exportCSV()" 
-            class="flex-grow sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition-all"
-            title="Last ned gjeldende utvalg som CSV"
-          >
+          <button onclick="exportCSV()" class="flex-grow sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             Eksporter CSV
           </button>
-          <button 
-            onclick="exportJSON()" 
-            class="flex-grow sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition-all"
-            title="Last ned gjeldende utvalg som JSON"
-          >
+          <button onclick="exportJSON()" class="flex-grow sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
@@ -235,70 +178,26 @@
         </div>
       </div>
  
-      <!-- Filters container -->
       <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-t border-gray-100 pt-4">
-        <!-- Gender Selectors -->
         <div class="flex bg-gray-100 p-1 rounded-full" id="gender-tabs">
-          <button 
-            data-value="alle" 
-            class="gender-tab active px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all"
-          >
-            Alle (67)
-          </button>
-          <button 
-            data-value="menn" 
-            class="gender-tab px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all"
-          >
-            Menn (34)
-          </button>
-          <button 
-            data-value="kvinner" 
-            class="gender-tab px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all"
-          >
-            Kvinner (33)
-          </button>
+          <button data-value="alle" id="tab-alle" class="gender-tab active px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all">Alle (-)</button>
+          <button data-value="menn" id="tab-menn" class="gender-tab px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all">Menn (-)</button>
+          <button data-value="kvinner" id="tab-kvinner" class="gender-tab px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all">Kvinner (-)</button>
         </div>
 
-        <!-- Event Type Filters -->
         <div class="flex flex-wrap gap-1.5" id="type-pills">
-          <button 
-            data-type="alle" 
-            class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all bg-tealDeep text-white border-tealDeep"
-          >
-            Alle øvelser
-          </button>
-          <button 
-            data-type="løp" 
-            class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
-          >
-            Løp
-          </button>
-          <button 
-            data-type="teknisk" 
-            class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
-          >
-            Teknisk
-          </button>
-          <button 
-            data-type="stafett" 
-            class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
-          >
-            Stafetter
-          </button>
-          <button 
-            data-type="mangekamp" 
-            class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
-          >
-            Mangekamp
-          </button>
+          <button data-type="alle" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all bg-tealDeep text-white border-tealDeep">Alle øvelser</button>
+          <button data-type="løp" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Løp</button>
+          <button data-type="teknisk" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Teknisk</button>
+          <button data-type="stafett" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Stafetter</button>
+          <button data-type="mangekamp" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Mangekamp</button>
         </div>
       </div>
     </div>
 
-    <!-- Active Filter summary indicators -->
     <div class="flex items-center justify-between px-1">
       <p id="results-count" class="text-sm text-gray-500 font-medium">
-        Viser <span class="font-bold text-tealDeep" id="filtered-count">67</span> av <span class="font-bold text-gray-700">67</span> banerekorder
+        Viser <span class="font-bold text-tealDeep" id="filtered-count">0</span> av <span class="font-bold text-gray-700" id="total-count">0</span> banerekorder
       </p>
       <div class="flex items-center gap-1.5 text-xs text-gray-400">
         <svg class="w-3.5 h-3.5 text-orangeWarm" fill="currentColor" viewBox="0 0 20 20">
@@ -308,10 +207,7 @@
       </div>
     </div>
 
-    <!-- Main Content Container: Table or Cards -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col flex-grow">
-      
-      <!-- Desktop Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
       <div class="hidden md:block overflow-x-auto custom-scroll">
         <table class="w-full text-left border-collapse">
           <thead>
@@ -324,18 +220,12 @@
               <th class="py-4 px-6 w-[10%]">Når</th>
             </tr>
           </thead>
-          <tbody id="records-tbody" class="divide-y divide-gray-100 text-sm font-medium text-gray-700">
-            <!-- Dynamic Rows go here -->
-          </tbody>
+          <tbody id="records-tbody" class="divide-y divide-gray-100 text-sm font-medium text-gray-700"></tbody>
         </table>
       </div>
 
-      <!-- Mobile Card List -->
-      <div id="records-card-list" class="block md:hidden divide-y divide-gray-100">
-        <!-- Dynamic Cards go here -->
-      </div>
+      <div id="records-card-list" class="block md:hidden divide-y divide-gray-100"></div>
 
-      <!-- Empty state template -->
       <div id="empty-state" class="hidden flex-col items-center justify-center text-center p-12 bg-white rounded-2xl">
         <div class="bg-orangeWarm/10 p-4 rounded-full text-orangeWarm mb-4">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -344,17 +234,10 @@
         </div>
         <h3 class="text-base font-bold text-gray-800">Ingen rekorder funnet</h3>
         <p class="text-sm text-gray-500 mt-1 max-w-sm">Prøv å endre søkeordet eller fjern noen av filtrene for å se flere resultater.</p>
-        <button 
-          onclick="resetFilters()" 
-          class="mt-4 px-4 py-2 bg-tealDeep hover:bg-tealDeep/90 text-white text-xs font-bold rounded-lg transition-all"
-        >
-          Nullstill filtre
-        </button>
+        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-tealDeep hover:bg-tealDeep/90 text-white text-xs font-bold rounded-lg transition-all">Nullstill filtre</button>
       </div>
-
     </div>
 
-    <!-- Info Section (NM2026 Connection) -->
     <section class="bg-tealDeep/5 border border-tealDeep/10 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex items-start gap-4">
         <div class="bg-tealDeep text-white p-2.5 rounded-xl shadow-inner mt-1">
@@ -371,10 +254,6 @@
         </div>
       </div>
       <div class="flex flex-col gap-2 w-full md:w-auto">
-        <div class="text-center md:text-right">
-          <span class="text-xs font-semibold text-gray-400 block"></span>
-          <span class="text-lg font-bold text-tealDeep"></span>
-        </div>
         <div class="text-center md:text-right border-t border-gray-200/50 pt-1">
           <span class="text-xs font-semibold text-gray-400 block">NM 2026</span>
           <span class="text-sm font-bold text-orangeWarm">23-25 juli</span>
@@ -383,134 +262,98 @@
     </section>
   </main>
 
-  <!-- Record Detail Drawer / Overlay (Dynamic Modal) -->
-  <div 
-    id="detail-modal" 
-    class="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4 opacity-0 pointer-events-none transition-all duration-300"
-  >
-    <div 
-      id="modal-content" 
-      class="bg-white w-full md:max-w-xl rounded-t-2xl md:rounded-2xl overflow-hidden shadow-2xl transform translate-y-full md:translate-y-4 transition-transform duration-300 max-h-[90vh] flex flex-col"
-    >
-      <!-- Header -->
-      <div class="track-bg text-white p-6 relative">
-        <button 
-          onclick="closeDetailModal()" 
-          class="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 transition-all focus:outline-none"
-        >
+  <!-- Record Detail Modal -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div id="modal-content" class="bg-white w-full md:max-w-xl rounded-t-2xl md:rounded-2xl overflow-hidden shadow-2xl transform translate-y-full md:translate-y-4 transition-transform duration-300 max-h-[55vh] md:max-h-[85vh] flex flex-col">
+      <div class="track-bg text-white p-3 md:p-5 relative">
+        <button onclick="closeDetailModal()" class="absolute top-2.5 right-2.5 bg-black/20 hover:bg-black/40 text-white rounded-full p-1.5 transition-all focus:outline-none">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <span id="modal-category-badge" class="px-2.5 py-1 text-[10px] font-extrabold uppercase bg-orangeWarm text-white tracking-widest rounded-full">MENN</span>
-        <h2 id="modal-event" class="text-2xl md:text-3xl font-extrabold tracking-tight mt-3">100m</h2>
-        <p class="text-teal-100 font-medium text-xs mt-1 flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          </svg>
-          Gjeldende banerekord på Trondheim Stadion
-        </p>
+        <span id="modal-category-badge" class="px-2 py-0.5 text-[9px] md:text-[10px] font-extrabold uppercase bg-orangeWarm text-white tracking-widest rounded-full">MENN</span>
+        <h2 id="modal-event" class="text-xl md:text-2xl font-extrabold tracking-tight mt-1">100m</h2>
       </div>
 
-      <!-- Record details -->
-      <div class="p-6 overflow-y-auto custom-scroll space-y-5 flex-grow">
-        <!-- Giant mark card -->
-        <div class="bg-brandGray rounded-xl p-5 border border-gray-100 text-center relative overflow-hidden">
-          <span class="text-xs font-semibold text-gray-400 block uppercase tracking-wider">Rekordresultat</span>
-          <span id="modal-result" class="text-4xl md:text-5xl font-black text-tealDeep block mt-2 tracking-tight">10,28</span>
-          <span id="modal-type-tag" class="inline-block mt-3 px-3 py-1 bg-white text-gray-500 rounded-full text-xs font-bold border border-gray-100 shadow-sm capitalize">Løpsøvelse</span>
+      <div class="p-3 md:p-5 overflow-y-auto custom-scroll space-y-3 flex-grow">
+        <div class="bg-brandGray rounded-lg p-3 border border-gray-100 text-center relative overflow-hidden flex items-center justify-between px-4">
+          <div class="text-left">
+            <span class="text-[10px] font-semibold text-gray-400 block uppercase tracking-wider">Rekord</span>
+            <span id="modal-type-tag" class="inline-block text-[11px] font-bold text-gray-500 capitalize">Løpsøvelse</span>
+          </div>
+          <span id="modal-result" class="text-2xl md:text-4xl font-black text-tealDeep tracking-tight">10,28</span>
         </div>
 
-        <div class="space-y-4">
-          <!-- Athlete Name -->
-          <div class="flex items-start gap-3.5">
-            <div class="bg-tealDeep/10 text-tealDeep p-2.5 rounded-xl mt-0.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div class="space-y-2 text-xs md:text-sm">
+          <div class="flex items-center gap-2.5">
+            <div class="bg-tealDeep/10 text-tealDeep p-1.5 rounded-lg flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <div>
-              <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Utøver</span>
-              <span id="modal-athlete" class="text-base font-bold text-gray-800 block mt-0.5">Jaysuma Saidy Ndure</span>
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Utøver</span>
+              <span id="modal-athlete" class="font-bold text-gray-800 truncate block">Jaysuma Saidy Ndure</span>
             </div>
           </div>
 
-          <!-- Club / country -->
-          <div class="flex items-start gap-3.5 border-t border-gray-50 pt-3">
-            <div class="bg-tealDeep/10 text-tealDeep p-2.5 rounded-xl mt-0.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <div class="flex items-center gap-2.5 border-t border-gray-50 pt-2">
+            <div class="bg-tealDeep/10 text-tealDeep p-1.5 rounded-lg flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
               </svg>
             </div>
-            <div>
-              <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Klubb / Land</span>
-              <span id="modal-club" class="text-base font-bold text-gray-800 block mt-0.5">IL i BUL</span>
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Klubb / Land</span>
+              <span id="modal-club" class="font-bold text-gray-800 truncate block">IL i BUL</span>
             </div>
           </div>
 
-          <!-- Date -->
-          <div class="flex items-start gap-3.5 border-t border-gray-50 pt-3">
-            <div class="bg-tealDeep/10 text-tealDeep p-2.5 rounded-xl mt-0.5">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <div class="flex items-center gap-2.5 border-t border-gray-50 pt-2">
+            <div class="bg-tealDeep/10 text-tealDeep p-1.5 rounded-lg flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <div>
-              <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Når satt</span>
-              <span id="modal-date" class="text-base font-bold font-mono text-gray-800 block mt-0.5">18.07.2008</span>
-              <span id="modal-age" class="text-xs font-semibold text-gray-500 mt-0.5 block">Satt for 18 år siden</span>
+            <div class="min-w-0 flex-grow flex items-center justify-between pr-1">
+              <div>
+                <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Når satt</span>
+                <span id="modal-date" class="font-bold font-mono text-gray-800 block">18.07.2008</span>
+              </div>
+              <span id="modal-age" class="text-[11px] font-semibold text-gray-500">Satt for 18 år siden</span>
             </div>
           </div>
         </div>
 
-        <!-- Historical badge helper -->
-        <div id="modal-historical-alert" class="p-4 rounded-xl border flex gap-3 bg-orangeWarm/5 border-orangeWarm/20 text-orangeDark hidden">
-          <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div id="modal-historical-alert" class="p-2.5 rounded-lg border flex gap-2 bg-orangeWarm/5 border-orangeWarm/20 text-orangeDark hidden">
+          <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          <div class="text-xs">
+          <div class="text-[11px]">
             <span class="font-bold block">Legendarisk historisk rekord!</span>
-            <span class="mt-0.5 block">Denne banerekorden har stått i mer enn 50 år og vitner om en enestående prestasjon på Trondheim Stadion.</span>
+            <span>Stått i mer enn 50 år på Trondheim Stadion.</span>
           </div>
         </div>
       </div>
 
-      <!-- Action Footer -->
-      <div class="bg-gray-50 p-4 border-t border-gray-100 flex gap-2">
-        <button 
-          id="modal-copy-btn"
-          onclick="copyRecordText()" 
-          class="flex-1 py-3 px-4 bg-tealDeep hover:bg-tealDeep/90 text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-          </svg>
+      <div class="bg-gray-50 p-2.5 border-t border-gray-100 flex gap-2">
+        <button id="modal-copy-btn" onclick="copyRecordText()" class="flex-1 py-2 px-3 bg-tealDeep hover:bg-tealDeep/90 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center gap-2">
           Kopier rekorddata
         </button>
-        <button 
-          onclick="closeDetailModal()" 
-          class="px-5 py-3 border border-gray-200 hover:bg-gray-100 text-gray-700 font-bold rounded-xl text-sm transition-all"
-        >
-          Lukk
-        </button>
+        <button onclick="closeDetailModal()" class="px-4 py-2 border border-gray-200 hover:bg-gray-100 text-gray-700 font-bold rounded-lg text-xs transition-all">Lukk</button>
       </div>
     </div>
   </div>
 
-  <!-- Success Toast Alert -->
-  <div 
-    id="toast" 
-    class="fixed bottom-6 right-6 bg-gray-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 z-50 border border-gray-800"
-  >
+  <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 z-50 border border-gray-800">
     <div class="bg-green-500 rounded-full p-1">
       <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     </div>
-    <span id="toast-message">Rekorddata kopiert til utklippstavlen!</span>
+    <span id="toast-message">Rekorddata kopiert!</span>
   </div>
 
-  <!-- Footer copyright line -->
   <footer class="bg-gray-900 text-gray-500 text-center py-6 border-t border-gray-800 text-xs mt-auto">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
       <p class="font-medium">&copy; 2026 Banerekorder Trondheim Stadion &bull; Hovedarena for NM i friidrett 2026</p>
@@ -522,133 +365,690 @@
     </div>
   </footer>
 
-  <!-- State & Dynamic rendering scripts -->
+  <!-- SCRIPT & DATA -->
   <script>
-    // Schema: ['Category', 'Event', 'Result', 'Name', 'Club', 'Date', 'Type']
-    const compactRecords = [
+    const rawRecordsData = [
       // MENN
-      ['Menn', '100m', '10,28', 'Jaysuma Saidy Ndure', 'IL i BUL', '18.07.2008', 'løp'],
-      ['Menn', '200m', '21,16', 'Mathias Hove Johansen', 'Idrettslaget Skjalg', '23.08.2020', 'løp'],
-      ['Menn', '400m', '46,81', 'Andreas Grimerud', 'Moelven IL', '21.08.2024', 'løp'],
-      ['Menn', '600m', '1.19,47', 'Kjetil Brenno Gagnås', 'Børsa IL', '26.06.2020', 'løp'],
-      ['Menn', '800m', '1.49,0', 'Arne Kvalheim', 'IK Tjalve', '05.08.1966', 'løp'],
-      ['Menn', '1000m', '2.28,8', 'Per Øystein Saksvik', 'Ranheim IL', '15.06.1974', 'løp'],
-      ['Menn', '1500m', '3.38,60', 'Kristoffer Sagli', 'Aure IL', '12.05.2025', 'løp'],
-      ['Menn', '1 mile (1609,33m)', '4.12,2', 'Ola Krangnes', 'Sunndal IL', '17.09.1981', 'løp'],
-      ['Menn', '3000m', '7.55,6', 'Gordon Pirie', 'GBR/ENG', '22.06.1956', 'løp'],
-      ['Menn', '5000m', '13.56,64', 'Mathias Flak', 'Steinkjer FK', '27.05.2025', 'løp'],
-      ['Menn', '10000m', '29.20,58', 'Urige Buta', 'Haugesund IL', '20.07.2008', 'løp'],
-      ['Menn', '110m hekk', '14,0', 'Willie Stevens', 'USA', '08.07.1957', 'løp'],
-      ['Menn', '200m hekk', '25,7', 'Lars Vikan Rise', 'Nidelv IL', '31.08.2005', 'løp'],
-      ['Menn', '300m hekk', '43,9', 'Ketil Knudsen', 'Malvik IL', '05.10.1977', 'løp'],
-      ['Menn', '400m hekk', '51,32', 'Andreas Totsås', 'Vidar', '18.07.2008', 'løp'],
-      ['Menn', '2000m hinder', '5.50,77', 'Esten Hansen-Møllerud Hauen', 'FIK Ren-Eng', '13.08.2022', 'løp'],
-      ['Menn', '3000m hinder', '8.42,4', 'Ernst Larsen', 'Ranheim IL', '05.09.1956', 'løp'],
-      ['Menn', '4x100m stafett', '41,03', 'Mathias Hove Johansen, Simen Tjelta Larsen, Lars Jøran Storhaug, Matias Sivertsvik', 'IL Skjalg', '21.05.2016', 'stafett'],
-      ['Menn', '4x200m stafett', '1.29,1', 'Trond Furuly, Stein Hanssen, Tor Klaussen, Ole Bernt Skarstein', 'IL Stålkameratene', '18.08.1969', 'stafett'],
-      ['Menn', '4x400m stafett', '3.15,92', 'Vebjørn Borge, Torbjørn Lysne, Thomas M. Heggøy, Sondre Dingsør', 'IL Gular', '22.05.2016', 'stafett'],
-      ['Menn', '4x800m stafett', '7.49,6', 'Jørn Aksel Krog, Tormod Børseth, Harald Inge Børseth, Svein Husby', 'Strindheim IL', '23.09.1968', 'stafett'],
-      ['Menn', '4x1500m stafett', '15.40,6', 'Konrad Ystborg, Terje Schr. Nielsen, Knut Kvalheim, Arne Kvalheim', 'IK Tjalve', '06.09.1970', 'stafett'],
-      ['Menn', '1000m stafett', '1.54,59', 'Bjørn S. Sommerfeldt, Ole-Thomas Steiro Andersen, Einar Inge Aschim Aasen, Rune Selstad', 'IF Hellas', '01.08.2004', 'stafett'],
-      ['Menn', 'Høyde', '2,13', 'Kjølv Egeland', 'IL i BUL', '20.07.2008', 'teknisk'],
-      ['Menn', 'Stav', '4,90', 'Benjamin Jensen', 'IK Tjalve', '18.07.2008', 'teknisk'],
-      ['Menn', 'Lengde', '7,61', 'Ingar Kiplesund', 'Trondheim Friidrett', '21.06.2020', 'teknisk'],
-      ['Menn', 'Tresteg', '15,72', 'Martin Jensen', 'IL i BUL', '05.08.1966', 'teknisk'],
-      ['Menn', 'Kule', '18,24', 'Gjøran Sørli', 'IK Tjalve', '18.07.2008', 'teknisk'],
-      ['Menn', 'Diskos', '58,65', 'Gaute Myklebust', 'Norna-Salhus', '19.07.2008', 'teknisk'],
-      ['Menn', 'Slegge', '66,21', 'Steffen Nerdal', 'Norna-Salhus', '18.07.2008', 'teknisk'],
-      ['Menn', 'Spyd', '72,52', 'Størk Avelsgaard Lien', 'Stjørdal FIK', '19.08.2012', 'teknisk'],
-      ['Menn', 'Spyd (gammel type)', '79,06', 'Egil Danielsen', 'Hamar IL', '21.06.1956', 'teknisk'],
-      ['Menn', '5-kamp', '3715', 'Hans Bernhard Skaset (6,79-53,05-23,1-43,20-4.16,8)', 'SK Freidig', '31.08.1962', 'mangekamp'],
-      ['Menn', '10-kamp', '6905', 'Hans Bernhard Skaset (11,2-6,86-12,38-1,65-50,2/15,8-46,38-3,30-53,89-4.17,8)', 'SK Freidig', '03/04.09.62', 'mangekamp'],
+      {
+        category: "Menn",
+        event: "100m",
+        result: "10,28",
+        name: "Jaysuma Saidy Ndure",
+        club: "IL i BUL",
+        date: "18.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "200m",
+        result: "21,16",
+        name: "Mathias Hove Johansen",
+        club: "Idrettslaget Skjalg",
+        date: "23.08.2020",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "400m",
+        result: "46,81",
+        name: "Andreas Grimerud",
+        club: "Moelven IL",
+        date: "21.08.2024",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "600m",
+        result: "1.19,47",
+        name: "Kjetil Brenno Gagnås",
+        club: "Børsa IL",
+        date: "26.06.2020",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "800m",
+        result: "1.49,0",
+        name: "Arne Kvalheim",
+        club: "IK Tjalve",
+        date: "05.08.1966",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "1000m",
+        result: "2.28,8",
+        name: "Per Øystein Saksvik",
+        club: "Ranheim IL",
+        date: "15.06.1974",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "1500m",
+        result: "3.38,60",
+        name: "Kristoffer Sagli",
+        club: "Aure IL",
+        date: "12.05.2025",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "1 mile (1609,33m)",
+        result: "4.12,2",
+        name: "Ola Krangnes",
+        club: "Sunndal IL",
+        date: "17.09.1981",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "3000m",
+        result: "7.55,6",
+        name: "Gordon Pirie",
+        club: "GBR/ENG",
+        date: "22.06.1956",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "5000m",
+        result: "13.56,64",
+        name: "Mathias Flak",
+        club: "Steinkjer FK",
+        date: "27.05.2025",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "10000m",
+        result: "29.20,58",
+        name: "Urige Buta",
+        club: "Haugesund IL",
+        date: "20.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "110m hekk",
+        result: "14,0",
+        name: "Willie Stevens",
+        club: "USA",
+        date: "08.07.1957",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "200m hekk",
+        result: "25,7",
+        name: "Lars Vikan Rise",
+        club: "Nidelv IL",
+        date: "31.08.2005",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "300m hekk",
+        result: "43,9",
+        name: "Ketil Knudsen",
+        club: "Malvik IL",
+        date: "05.10.1977",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "400m hekk",
+        result: "51,32",
+        name: "Andreas Totsås",
+        club: "Vidar",
+        date: "18.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "2000m hinder",
+        result: "5.50,77",
+        name: "Esten Hansen-Møllerud Hauen",
+        club: "FIK Ren-Eng",
+        date: "13.08.2022",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "3000m hinder",
+        result: "8.42,4",
+        name: "Ernst Larsen",
+        club: "Ranheim IL",
+        date: "05.09.1956",
+        type: "løp"
+      },
+      {
+        category: "Menn",
+        event: "4x100m stafett",
+        result: "41,03",
+        name: "Mathias Hove Johansen, Simen Tjelta Larsen, Lars Jøran Storhaug, Matias Sivertsvik",
+        club: "IL Skjalg",
+        date: "21.05.2016",
+        type: "stafett"
+      },
+      {
+        category: "Menn",
+        event: "4x200m stafett",
+        result: "1.29,1",
+        name: "Trond Furuly, Stein Hanssen, Tor Klaussen, Ole Bernt Skarstein",
+        club: "IL Stålkameratene",
+        date: "18.08.1969",
+        type: "stafett"
+      },
+      {
+        category: "Menn",
+        event: "4x400m stafett",
+        result: "3.15,92",
+        name: "Vebjørn Borge, Torbjørn Lysne, Thomas M. Heggøy, Sondre Dingsør",
+        club: "IL Gular",
+        date: "22.05.2016",
+        type: "stafett"
+      },
+      {
+        category: "Menn",
+        event: "4x800m stafett",
+        result: "7.49,6",
+        name: "Jørn Aksel Krog, Tormod Børseth, Harald Inge Børseth, Svein Husby",
+        club: "Strindheim IL",
+        date: "23.09.1968",
+        type: "stafett"
+      },
+      {
+        category: "Menn",
+        event: "4x1500m stafett",
+        result: "15.40,6",
+        name: "Konrad Ystborg, Terje Schr. Nielsen, Knut Kvalheim, Arne Kvalheim",
+        club: "IK Tjalve",
+        date: "06.09.1970",
+        type: "stafett"
+      },
+      {
+        category: "Menn",
+        event: "1000m stafett",
+        result: "1.54,59",
+        name: "Bjørn S. Sommerfeldt, Ole-Thomas Steiro Andersen, Einar Inge Aschim Aasen, Rune Selstad",
+        club: "IF Hellas",
+        date: "01.08.2004",
+        type: "stafett"
+      },
+      {
+        category: "Menn",
+        event: "Høyde",
+        result: "2,13",
+        name: "Kjølv Egeland",
+        club: "IL i BUL",
+        date: "20.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Stav",
+        result: "4,90",
+        name: "Benjamin Jensen",
+        club: "IK Tjalve",
+        date: "18.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Lengde",
+        result: "7,61",
+        name: "Ingar Kiplesund",
+        club: "Trondheim Friidrett",
+        date: "21.06.2020",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Tresteg",
+        result: "15,72",
+        name: "Martin Jensen",
+        club: "IL i BUL",
+        date: "05.08.1966",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Kule",
+        result: "18,24",
+        name: "Gjøran Sørli",
+        club: "IK Tjalve",
+        date: "18.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Diskos",
+        result: "58,65",
+        name: "Gaute Myklebust",
+        club: "Norna-Salhus",
+        date: "19.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Slegge",
+        result: "66,21",
+        name: "Steffen Nerdal",
+        club: "Norna-Salhus",
+        date: "18.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Spyd",
+        result: "72,52",
+        name: "Størk Avelsgaard Lien",
+        club: "Stjørdal FIK",
+        date: "19.08.2012",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "Spyd (gammel type)",
+        result: "79,06",
+        name: "Egil Danielsen",
+        club: "Hamar IL",
+        date: "21.06.1956",
+        type: "teknisk"
+      },
+      {
+        category: "Menn",
+        event: "5-kamp",
+        result: "3715",
+        name: "Hans Bernhard Skaset (6,79-53,05-23,1-43,20-4.16,8)",
+        club: "SK Freidig",
+        date: "31.08.1962",
+        type: "mangekamp"
+      },
+      {
+        category: "Menn",
+        event: "10-kamp",
+        result: "6905",
+        name: "Hans Bernhard Skaset (11,2-6,86-12,38-1,65-50,2/15,8-46,38-3,30-53,89-4.17,8)",
+        club: "SK Freidig",
+        date: "03/04.09.62",
+        type: "mangekamp"
+      },
 
       // KVINNER
-      ['Kvinner', '60m', '7,7', 'Liv Olaug Paulsen', 'IL Viking, Stav.', '07.07.1950', 'løp'],
-      ['Kvinner', '100m', '11,51', 'Henriette Jæger', 'Aremark IF', '22.08.2020', 'løp'],
-      ['Kvinner', '200m', '24,27', 'Marte Pettersen', 'Trondheim Friidrett', '23.08.2020', 'løp'],
-      ['Kvinner', '400m', '52,52', 'Henriette Jæger', 'Aremark IF', '22.08.2020', 'løp'],
-      ['Kvinner', '600m', '1.26,90', 'Hedda Hynne', 'IK Tjalve', '28.09.2020', 'løp'],
-      ['Kvinner', '800m', '2.06,18', 'Ingvill Måkestad', 'IK Tjalve', '19.07.2008', 'løp'],
-      ['Kvinner', '1500m', '4.11.13', 'Ingeborg Østgård', 'IK Tjalve', '21.08.2024', 'løp'],
-      ['Kvinner', '1 mile (1609,33m)', '4.57,1', 'Ingrid Christensen (Kristiansen)', 'SK Freidig', '15.05.1979', 'løp'],
-      ['Kvinner', '3000m', '9.15,65', 'Ingeborg Østgård', 'IK Tjalve', '19.09.2023', 'løp'],
-      ['Kvinner', '5000m', '16.08,22', 'Karoline Bjerkeli Grøvdal', 'Isfjorden IL', '20.07.2008', 'løp'],
-      ['Kvinner', '10000m', '33.23,4', 'Ingrid Christensen (Kristiansen)', 'SK Freidig', '05.10.1978', 'løp'],
-      ['Kvinner', '100m hekk', '13,20', 'Christina Vukicevic', 'Ski IL', '19.07.2008', 'løp'],
-      ['Kvinner', '200m hekk', '29,24', 'Marte Maria Doeven Forven Jermstad', 'Selsbakk IF', '28.08.2013', 'løp'],
-      ['Kvinner', '300m hekk', '41,95', 'Hannah Rebekah Murai-Ubby', 'Ranheim IL', '12.08.2022', 'løp'],
-      ['Kvinner', '400m hekk', '58,46', 'Benedicte Hauge', 'Kristiansand IF', '18.07.2008', 'løp'],
-      ['Kvinner', '2000m hinder', '6.41,56', 'Thea Charlotte Knutsen', 'Varegg IL', '04.09.2021', 'løp'],
-      ['Kvinner', '3000m hinder', '10.22,17', 'Silje Fjørtoft', 'SK Vidar', '19.07.2008', 'løp'],
-      ['Kvinner', '4x100m stafett', '45,60', 'Vilde Aasmo, Ida Bakke Hansen, Agathe Holtan Wathne, Nathalie O. Johnsen', 'Sandnes IL', '22.05.2016', 'stafett'],
-      ['Kvinner', '4x200m stafett', '1.46,1', 'Marit Prøsch, Gunn Elin Sørensen, Gretha S. Gustavsen, Toril Husby', 'Nidelv IL', '17.06.1974', 'stafett'],
-      ['Kvinner', '4x400m stafett', '3.47,81', 'Malin Edland, Kaja Rolfsen, Synne Frydenlund, Josefine Tomine Eriksen', 'Larvik Turn', '21.05.2016', 'stafett'],
-      ['Kvinner', '3x800m stafett', '6.44,5', 'Helle Hexeberg, Lene Hestdal, Gro Reinhardt', 'IL Tyrving', '10.09.1977', 'stafett'],
-      ['Kvinner', '1000m stafett', '2.10,43', 'Stine Kufaas, Trine Sjaastad, Stine M. Tomb, Cecilie Benedicte Isern', 'Trondheim FIK', '20.07.2008', 'stafett'],
-      ['Kvinner', 'Høyde', '1,92', 'Tonje Angelsen', 'Trondheim FIK', '01.07.2013', 'teknisk'],
-      ['Kvinner', 'Stav', '4,30', 'Cathrine Larsåsen', 'IL i BUL', '19.07.2008', 'teknisk'],
-      ['Kvinner', 'Lengde', '6,33', 'Margrethe Renstrøm', 'IK Tjalve', '19.07.2008', 'teknisk'],
-      ['Kvinner', 'Tresteg', '12,83', 'Mia Haave', 'Tyrving', '18.07.2008', 'teknisk'],
-      ['Kvinner', 'Kule', '13,98', 'Yasuko Matsuda', 'JAPAN', '05.08.1960', 'teknisk'],
-      ['Kvinner', 'Diskos', '51,69', 'Grete Etholm Snyder', 'IK Tjalve', '20.07.2008', 'teknisk'],
-      ['Kvinner', 'Slegge', '63,61', 'Mona Christine Holm', 'IK Tjalve', '19.07.2008', 'teknisk'],
-      ['Kvinner', 'Spyd', '50,74', 'Maria Børstad Jensen', 'Stjørdal FIK', '27.05.2018', 'teknisk'],
-      ['Kvinner', '3-kamp', '2612', 'Anne Lise Wærness (Wraa) (13,1-41,74-1,65)', 'SK Freidig', '20.06.1969', 'mangekamp'],
-      ['Kvinner', '5-kamp', '3684', 'Hilde Fredriksen (14,2-9,20-1,57/5,65-2.18,4)', 'Grorud IL', '10/11.09.77', 'mangekamp'],
-      ['Kvinner', '7-kamp', '4995', 'Frida Thorsås (15,62-1,57-12,29-26,41/5,52-32,94-2,17,91)', 'Urædd Friidrett', '11/12.09.10', 'mangekamp']
+      {
+        category: "Kvinner",
+        event: "60m",
+        result: "7,7",
+        name: "Liv Olaug Paulsen",
+        club: "IL Viking, Stav.",
+        date: "07.07.1950",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "100m",
+        result: "11,51",
+        name: "Henriette Jæger",
+        club: "Aremark IF",
+        date: "22.08.2020",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "200m",
+        result: "24,27",
+        name: "Marte Pettersen",
+        club: "Trondheim Friidrett",
+        date: "23.08.2020",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "400m",
+        result: "52,52",
+        name: "Henriette Jæger",
+        club: "Aremark IF",
+        date: "22.08.2020",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "600m",
+        result: "1.26,90",
+        name: "Hedda Hynne",
+        club: "IK Tjalve",
+        date: "28.09.2020",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "800m",
+        result: "2.06,18",
+        name: "Ingvill Måkestad",
+        club: "IK Tjalve",
+        date: "19.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "1500m",
+        result: "4.11.13",
+        name: "Ingeborg Østgård",
+        club: "IK Tjalve",
+        date: "21.08.2024",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "1 mile (1609,33m)",
+        result: "4.57,1",
+        name: "Ingrid Christensen (Kristiansen)",
+        club: "SK Freidig",
+        date: "15.05.1979",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "3000m",
+        result: "9.15,65",
+        name: "Ingeborg Østgård",
+        club: "IK Tjalve",
+        date: "19.09.2023",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "5000m",
+        result: "16.08,22",
+        name: "Karoline Bjerkeli Grøvdal",
+        club: "Isfjorden IL",
+        date: "20.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "10000m",
+        result: "33.23,4",
+        name: "Ingrid Christensen (Kristiansen)",
+        club: "SK Freidig",
+        date: "05.10.1978",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "100m hekk",
+        result: "13,20",
+        name: "Christina Vukicevic",
+        club: "Ski IL",
+        date: "19.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "200m hekk",
+        result: "29,24",
+        name: "Marte Maria Doeven Forven Jermstad",
+        club: "Selsbakk IF",
+        date: "28.08.2013",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "300m hekk",
+        result: "41,95",
+        name: "Hannah Rebekah Murai-Ubby",
+        club: "Ranheim IL",
+        date: "12.08.2022",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "400m hekk",
+        result: "58,46",
+        name: "Benedicte Hauge",
+        club: "Kristiansand IF",
+        date: "18.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "2000m hinder",
+        result: "6.41,56",
+        name: "Thea Charlotte Knutsen",
+        club: "Varegg IL",
+        date: "04.09.2021",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "3000m hinder",
+        result: "10.22,17",
+        name: "Silje Fjørtoft",
+        club: "SK Vidar",
+        date: "19.07.2008",
+        type: "løp"
+      },
+      {
+        category: "Kvinner",
+        event: "4x100m stafett",
+        result: "45,60",
+        name: "Vilde Aasmo, Ida Bakke Hansen, Agathe Holtan Wathne, Nathalie O. Johnsen",
+        club: "Sandnes IL",
+        date: "22.05.2016",
+        type: "stafett"
+      },
+      {
+        category: "Kvinner",
+        event: "4x200m stafett",
+        result: "1.46,1",
+        name: "Marit Prøsch, Gunn Elin Sørensen, Gretha S. Gustavsen, Toril Husby",
+        club: "Nidelv IL",
+        date: "17.06.1974",
+        type: "stafett"
+      },
+      {
+        category: "Kvinner",
+        event: "4x400m stafett",
+        result: "3.47,81",
+        name: "Malin Edland, Kaja Rolfsen, Synne Frydenlund, Josefine Tomine Eriksen",
+        club: "Larvik Turn",
+        date: "21.05.2016",
+        type: "stafett"
+      },
+      {
+        category: "Kvinner",
+        event: "3x800m stafett",
+        result: "6.44,5",
+        name: "Helle Hexeberg, Lene Hestdal, Gro Reinhardt",
+        club: "IL Tyrving",
+        date: "10.09.1977",
+        type: "stafett"
+      },
+      {
+        category: "Kvinner",
+        event: "1000m stafett",
+        result: "2.10,43",
+        name: "Stine Kufaas, Trine Sjaastad, Stine M. Tomb, Cecilie Benedicte Isern",
+        club: "Trondheim FIK",
+        date: "20.07.2008",
+        type: "stafett"
+      },
+      {
+        category: "Kvinner",
+        event: "Høyde",
+        result: "1,92",
+        name: "Tonje Angelsen",
+        club: "Trondheim FIK",
+        date: "01.07.2013",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "Stav",
+        result: "4,30",
+        name: "Cathrine Larsåsen",
+        club: "IL i BUL",
+        date: "19.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "Lengde",
+        result: "6,33",
+        name: "Margrethe Renstrøm",
+        club: "IK Tjalve",
+        date: "19.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "Tresteg",
+        result: "12,83",
+        name: "Mia Haave",
+        club: "Tyrving",
+        date: "18.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "Kule",
+        result: "13,98",
+        name: "Yasuko Matsuda",
+        club: "JAPAN",
+        date: "05.08.1960",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "Diskos",
+        result: "51,69",
+        name: "Grete Etholm Snyder",
+        club: "IK Tjalve",
+        date: "20.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "Slegge",
+        result: "63,61",
+        name: "Mona Christine Holm",
+        club: "IK Tjalve",
+        date: "19.07.2008",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "Spyd",
+        result: "50,74",
+        name: "Maria Børstad Jensen",
+        club: "Stjørdal FIK",
+        date: "27.05.2018",
+        type: "teknisk"
+      },
+      {
+        category: "Kvinner",
+        event: "3-kamp",
+        result: "2612",
+        name: "Anne Lise Wærness (Wraa) (13,1-41,74-1,65)",
+        club: "SK Freidig",
+        date: "20.06.1969",
+        type: "mangekamp"
+      },
+      {
+        category: "Kvinner",
+        event: "5-kamp",
+        result: "3684",
+        name: "Hilde Fredriksen (14,2-9,20-1,57/5,65-2.18,4)",
+        club: "Grorud IL",
+        date: "10/11.09.77",
+        type: "mangekamp"
+      },
+      {
+        category: "Kvinner",
+        event: "7-kamp",
+        result: "4995",
+        name: "Frida Thorsås (15,62-1,57-12,29-26,41/5,52-32,94-2,17,91)",
+        club: "Urædd Friidrett",
+        date: "11/12.09.10",
+        type: "mangekamp"
+      }
     ];
 
-    // Decode to clean objects and process "ny" / "nm2026" tag automatically
-    const keys = ['category', 'event', 'rawResult', 'name', 'club', 'date', 'type'];
-    const records = compactRecords.map((r, i) => {
-      const recObj = { id: `rec-${i}` };
-      keys.forEach((k, idx) => recObj[k] = r[idx]);
+    // System Logikk
+    const records = rawRecordsData.map((rec, i) => {
+      const raw = rec.result || '';
+      const hasNyTag = /\b(ny|nm2026)\b/i.test(raw);
+      const cleanMark = raw.replace(/\b(ny|nm2026)\b/gi, '').trim();
 
-      // Check if result contains "ny" or "nm2026"
-      const hasNyTag = /\b(ny|nm2026)\b/i.test(recObj.rawResult);
-      const cleanMark = recObj.rawResult.replace(/\b(ny|nm2026)\b/gi, '').trim();
-
-      recObj.cleanResult = cleanMark;
-      recObj.result = hasNyTag 
-        ? `${cleanMark} <span class="badge-ny">NM2026</span>` 
-        : cleanMark;
-
-      return recObj;
+      return {
+        id: `rec-${i}`,
+        category: rec.category,
+        event: rec.event,
+        cleanResult: cleanMark,
+        result: hasNyTag ? `${cleanMark} <span class="badge-ny">NM2026</span>` : cleanMark,
+        name: rec.name,
+        club: rec.club,
+        date: rec.date,
+        type: rec.type
+      };
     });
 
-    // Active state
     let searchFilter = '';
     let genderFilter = 'alle';
     let typeFilter = 'alle';
     let selectedRecord = null;
 
-    // Elements
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search-btn');
     const recordsTbody = document.getElementById('records-tbody');
     const recordsCardList = document.getElementById('records-card-list');
     const emptyState = document.getElementById('empty-state');
     const filteredCountText = document.getElementById('filtered-count');
+    const totalCountText = document.getElementById('total-count');
     const detailModal = document.getElementById('detail-modal');
     const modalContent = document.getElementById('modal-content');
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
 
-    // Init
     window.addEventListener('DOMContentLoaded', () => {
+      updateOverviewStats();
       renderRecords();
       setupEventListeners();
     });
 
+    function updateOverviewStats() {
+      const menn = records.filter(r => r.category === 'Menn').length;
+      const kvinner = records.filter(r => r.category === 'Kvinner').length;
+      const total = records.length;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-ratio').textContent = `${menn} / ${kvinner}`;
+      totalCountText.textContent = total;
+
+      document.getElementById('tab-alle').textContent = `Alle (${total})`;
+      document.getElementById('tab-menn').textContent = `Menn (${menn})`;
+      document.getElementById('tab-kvinner').textContent = `Kvinner (${kvinner})`;
+
+      const years = records.map(r => {
+        const parts = r.date.split('.');
+        let year = parseInt(parts[2]);
+        if (year < 100) year += (year > 30 ? 1900 : 2000);
+        return isNaN(year) ? null : year;
+      }).filter(Boolean);
+
+      if (years.length) {
+        document.getElementById('stat-oldest').textContent = Math.min(...years);
+        document.getElementById('stat-newest').textContent = Math.max(...years);
+      }
+    }
+
     function setupEventListeners() {
-      // Search
       searchInput.addEventListener('input', (e) => {
         searchFilter = e.target.value.toLowerCase().trim();
-        if (searchFilter) {
-          clearSearchBtn.classList.remove('hidden');
-        } else {
-          clearSearchBtn.classList.add('hidden');
-        }
+        if (searchFilter) clearSearchBtn.classList.remove('hidden');
+        else clearSearchBtn.classList.add('hidden');
         renderRecords();
       });
 
@@ -660,7 +1060,6 @@
         searchInput.focus();
       });
 
-      // Gender Tabs
       const tabs = document.querySelectorAll('.gender-tab');
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -671,7 +1070,6 @@
         });
       });
 
-      // Type Pills
       const pills = document.querySelectorAll('.type-pill');
       pills.forEach(pill => {
         pill.addEventListener('click', () => {
@@ -687,41 +1085,30 @@
         });
       });
 
-      // Close modal on outer click
       detailModal.addEventListener('click', (e) => {
-        if (e.target === detailModal) {
-          closeDetailModal();
-        }
+        if (e.target === detailModal) closeDetailModal();
       });
     }
 
-    // Reset all filters
     function resetFilters() {
       searchInput.value = '';
       searchFilter = '';
       clearSearchBtn.classList.add('hidden');
-
       const firstTab = document.querySelector('.gender-tab[data-value="alle"]');
       if (firstTab) firstTab.click();
-
       const firstPill = document.querySelector('.type-pill[data-type="alle"]');
       if (firstPill) firstPill.click();
-
       renderRecords();
       showToast('Alle filtre ble nullstilt.');
     }
 
-    // Match helper for highlighting search matches
     function highlightText(text, search) {
       if (!search) return text;
-      
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = text;
       const plainText = tempDiv.innerText;
 
-      if (!plainText.toLowerCase().includes(search.toLowerCase())) {
-        return text;
-      }
+      if (!plainText.toLowerCase().includes(search.toLowerCase())) return text;
 
       const regex = new RegExp(`(${escapeRegExp(search)})`, 'gi');
       return text.replace(regex, `<mark class="bg-orangeWarm/25 text-gray-900 font-semibold px-0.5 rounded">$1</mark>`);
@@ -731,21 +1118,17 @@
       return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    // Primary Render
     function renderRecords() {
       const filtered = records.filter(rec => {
         if (genderFilter !== 'alle') {
           if (genderFilter === 'menn' && rec.category !== 'Menn') return false;
           if (genderFilter === 'kvinner' && rec.category !== 'Kvinner') return false;
         }
-
         if (typeFilter !== 'alle' && rec.type !== typeFilter) return false;
-
         if (searchFilter) {
           const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
           if (!cleanTarget.includes(searchFilter)) return false;
         }
-
         return true;
       });
 
@@ -768,68 +1151,34 @@
         const genderColor = isMen ? 'tag-menn border-transparent' : 'tag-kvinner border-transparent';
         
         let typeBadge = '';
-        if (rec.type === 'løp') {
-          typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md border border-blue-100 uppercase">Løp</span>`;
-        } else if (rec.type === 'teknisk') {
-          typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded-md border border-emerald-100 uppercase">Teknisk</span>`;
-        } else if (rec.type === 'stafett') {
-          typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-purple-50 text-purple-700 font-bold rounded-md border border-purple-100 uppercase">Stafett</span>`;
-        } else if (rec.type === 'mangekamp') {
-          typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-amber-50 text-amber-700 font-bold rounded-md border border-amber-100 uppercase">Mangekamp</span>`;
-        }
+        if (rec.type === 'løp') typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md border border-blue-100 uppercase">Løp</span>`;
+        else if (rec.type === 'teknisk') typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded-md border border-emerald-100 uppercase">Teknisk</span>`;
+        else if (rec.type === 'stafett') typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-purple-50 text-purple-700 font-bold rounded-md border border-purple-100 uppercase">Stafett</span>`;
+        else if (rec.type === 'mangekamp') typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-amber-50 text-amber-700 font-bold rounded-md border border-amber-100 uppercase">Mangekamp</span>`;
 
         const zebraBg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/40';
 
-        // Desktop Row HTML
         rowsHTML += `
-          <tr 
-            onclick="openDetailModal('${rec.id}')" 
-            class="${zebraBg} hover:bg-orangeWarm/5 cursor-pointer transition-all duration-150 border-b border-gray-100/60"
-          >
-            <td class="py-3.5 px-6">
-              <span class="inline-block text-xs font-bold px-2.5 py-0.5 border rounded-full uppercase ${genderColor}">
-                ${rec.category}
-              </span>
-            </td>
-            <td class="py-3.5 px-6 text-gray-900 font-bold text-sm">
-              ${highlightText(rec.event, searchFilter)}
-            </td>
-            <td class="py-3.5 px-6 font-mono text-orangeWarm font-bold text-base">
-              ${highlightText(rec.result, searchFilter)}
-            </td>
-            <td class="py-3.5 px-6 text-gray-800 font-semibold text-sm max-w-xs truncate" title="${rec.name}">
-              ${highlightText(rec.name, searchFilter)}
-            </td>
-            <td class="py-3.5 px-6 text-gray-500 text-sm max-w-[150px] truncate" title="${rec.club}">
-              ${highlightText(rec.club, searchFilter)}
-            </td>
-            <td class="py-3.5 px-6 text-gray-400 font-mono text-xs">
-              ${highlightText(rec.date, searchFilter)}
-            </td>
+          <tr onclick="openDetailModal('${rec.id}')" class="${zebraBg} hover:bg-orangeWarm/5 cursor-pointer transition-all duration-150 border-b border-gray-100/60">
+            <td class="py-3.5 px-6"><span class="inline-block text-xs font-bold px-2.5 py-0.5 border rounded-full uppercase ${genderColor}">${rec.category}</span></td>
+            <td class="py-3.5 px-6 text-gray-900 font-bold text-sm">${highlightText(rec.event, searchFilter)}</td>
+            <td class="py-3.5 px-6 font-mono text-orangeWarm font-bold text-base">${highlightText(rec.result, searchFilter)}</td>
+            <td class="py-3.5 px-6 text-gray-800 font-semibold text-sm max-w-xs truncate" title="${rec.name}">${highlightText(rec.name, searchFilter)}</td>
+            <td class="py-3.5 px-6 text-gray-500 text-sm max-w-[150px] truncate" title="${rec.club}">${highlightText(rec.club, searchFilter)}</td>
+            <td class="py-3.5 px-6 text-gray-400 font-mono text-xs">${highlightText(rec.date, searchFilter)}</td>
           </tr>
         `;
 
-        // Mobile Card HTML
         cardsHTML += `
-          <div 
-            onclick="openDetailModal('${rec.id}')" 
-            class="p-4 active:bg-orangeWarm/5 bg-white transition-all cursor-pointer flex flex-col gap-2.5"
-          >
+          <div onclick="openDetailModal('${rec.id}')" class="p-4 active:bg-orangeWarm/5 bg-white transition-all cursor-pointer flex flex-col gap-2.5">
             <div class="flex items-center justify-between gap-2">
-              <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 border rounded-full uppercase ${genderColor}">
-                ${rec.category}
-              </span>
-              <div class="flex items-center gap-1.5">
-                ${typeBadge}
-                <span class="text-[11px] text-gray-400 font-mono font-medium">${highlightText(rec.date, searchFilter)}</span>
-              </div>
+              <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 border rounded-full uppercase ${genderColor}">${rec.category}</span>
+              <div class="flex items-center gap-1.5">${typeBadge}<span class="text-[11px] text-gray-400 font-mono font-medium">${highlightText(rec.date, searchFilter)}</span></div>
             </div>
-
             <div class="flex items-baseline justify-between gap-4">
               <h4 class="text-sm font-bold text-gray-900">${highlightText(rec.event, searchFilter)}</h4>
               <span class="text-base font-extrabold text-orangeWarm font-mono whitespace-nowrap">${highlightText(rec.result, searchFilter)}</span>
             </div>
-
             <div class="flex flex-col gap-0.5">
               <span class="text-xs font-semibold text-gray-700">${highlightText(rec.name, searchFilter)}</span>
               <span class="text-[11px] text-gray-400 font-medium">${highlightText(rec.club, searchFilter)}</span>
@@ -842,13 +1191,11 @@
       recordsCardList.innerHTML = cardsHTML;
     }
 
-    // Detail Modal Controller
     function openDetailModal(id) {
       const rec = records.find(r => r.id === id);
       if (!rec) return;
 
       selectedRecord = rec;
-
       document.getElementById('modal-event').innerHTML = rec.event;
       document.getElementById('modal-result').innerHTML = rec.result;
       document.getElementById('modal-athlete').innerHTML = rec.name;
@@ -857,16 +1204,14 @@
       
       const badge = document.getElementById('modal-category-badge');
       badge.textContent = rec.category;
-      if (rec.category === 'Menn') {
-        badge.className = "px-2.5 py-1 text-[10px] font-extrabold uppercase bg-sky-500 text-white tracking-widest rounded-full";
-      } else {
-        badge.className = "px-2.5 py-1 text-[10px] font-extrabold uppercase bg-rose-500 text-white tracking-widest rounded-full";
-      }
+      badge.className = rec.category === 'Menn' 
+        ? "px-2 py-0.5 text-[9px] md:text-[10px] font-extrabold uppercase bg-sky-500 text-white tracking-widest rounded-full" 
+        : "px-2 py-0.5 text-[9px] md:text-[10px] font-extrabold uppercase bg-rose-500 text-white tracking-widest rounded-full";
 
       const typeTag = document.getElementById('modal-type-tag');
       typeTag.textContent = rec.type === 'løp' ? 'Løpsøvelse' : 
-                             rec.type === 'teknisk' ? 'Teknisk øvelse (Kast/Hopp)' :
-                             rec.type === 'stafett' ? 'Stafett' : 'Mangekamp (Sammensatt)';
+                             rec.type === 'teknisk' ? 'Teknisk øvelse' :
+                             rec.type === 'stafett' ? 'Stafett' : 'Mangekamp';
 
       const ageLabel = document.getElementById('modal-age');
       const historicalAlert = document.getElementById('modal-historical-alert');
@@ -874,24 +1219,16 @@
       try {
         const parts = rec.date.split('.');
         let year = parseInt(parts[2]);
-        if (year < 100) {
-          year += (year > 30 ? 1900 : 2000);
-        }
+        if (year < 100) year += (year > 30 ? 1900 : 2000);
         const age = 2026 - year;
         
-        if (age <= 0) {
-          ageLabel.textContent = "Satt i inneværende sesong (2025/2026)";
-        } else {
-          ageLabel.textContent = `Satt i ${year} (for ${age} år siden)`;
-        }
+        if (age <= 0) ageLabel.textContent = "Satt i 2025/2026";
+        else ageLabel.textContent = `Satt i ${year} (${age} år siden)`;
 
-        if (age >= 50) {
-          historicalAlert.classList.remove('hidden');
-        } else {
-          historicalAlert.classList.add('hidden');
-        }
+        if (age >= 50) historicalAlert.classList.remove('hidden');
+        else historicalAlert.classList.add('hidden');
       } catch (err) {
-        ageLabel.textContent = "Historisk banerekord";
+        ageLabel.textContent = "Historisk rekord";
         historicalAlert.classList.add('hidden');
       }
 
@@ -907,30 +1244,19 @@
       selectedRecord = null;
     }
 
-    // Clipboard Copy Helper
     function copyRecordText() {
       if (!selectedRecord) return;
       const rec = selectedRecord;
       const textToCopy = `Banerekord Trondheim Stadion (${rec.category}): ${rec.event} - ${rec.cleanResult} satt av ${rec.name} (${rec.club}) den ${rec.date}.`;
-      
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('Rekorddata ble kopiert!');
-      }).catch(err => {
-        showToast('Klarte ikke å kopiere. Prøv igjen.');
-      });
+      navigator.clipboard.writeText(textToCopy).then(() => showToast('Rekorddata ble kopiert!'));
     }
 
-    // Success Toast Notification
     function showToast(message) {
       toastMessage.textContent = message;
       toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-      
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-      }, 3000);
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'), 3000);
     }
 
-    // Export current selection as CSV
     function exportCSV() {
       const activeFiltered = records.filter(rec => {
         if (genderFilter !== 'alle') {
@@ -946,7 +1272,6 @@
       });
 
       let csvContent = "data:text/csv;charset=utf-8,Kategori;Øvelse;Resultat;Navn;Klubb/Land;Når\r\n";
-      
       activeFiltered.forEach(rec => {
         const row = [rec.category, rec.event, rec.cleanResult, rec.name, rec.club, rec.date]
           .map(val => `"${val.replace(/"/g, '""')}"`)
@@ -957,14 +1282,13 @@
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `banerekorder_trondheim_stadion_${genderFilter}_${typeFilter}.csv`);
+      link.setAttribute("download", `banerekorder_trondheim_stadion.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast('CSV-fil generert og lastet ned!');
+      showToast('CSV-fil generert!');
     }
 
-    // Export current selection as JSON
     function exportJSON() {
       const activeFiltered = records.filter(rec => {
         if (genderFilter !== 'alle') {
@@ -992,11 +1316,11 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cleanedJSON, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `banerekorder_trondheim_stadion_${genderFilter}_${typeFilter}.json`);
+      downloadAnchor.setAttribute("download", `banerekorder_trondheim_stadion.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       document.body.removeChild(downloadAnchor);
-      showToast('JSON-data generert og lastet ned!');
+      showToast('JSON-data generert!');
     }
   </script>
 </body>
