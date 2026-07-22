@@ -96,7 +96,7 @@
     }
   </style>
 </head>
-<body class="bg-brandGray text-gray-900 font-sans antialiased">
+<body class="bg-brandGray text-gray-900 font-sans antialiased relative">
 
   <!-- Header Banner -->
   <header class="track-bg text-white py-10 px-4 md:px-8 border-b-4 border-orangeWarm shadow-md relative overflow-hidden">
@@ -262,10 +262,10 @@
     </section>
   </main>
 
-  <!-- Record Detail Modal -->
-  <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div id="modal-content" class="bg-white w-full md:max-w-xl rounded-t-2xl md:rounded-2xl overflow-hidden shadow-2xl transform translate-y-full md:translate-y-4 transition-transform duration-300 max-h-[55vh] md:max-h-[85vh] flex flex-col">
-      <div class="track-bg text-white p-3 md:p-5 relative">
+  <!-- Record Detail Modal (plasseres absolutt ved trykkpunktet) -->
+  <div id="detail-modal" class="absolute inset-x-0 bg-black/50 z-50 flex items-center justify-center p-2 opacity-0 pointer-events-none transition-all duration-300">
+    <div id="modal-content" class="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl transform translate-y-4 transition-transform duration-300 flex flex-col">
+      <div class="track-bg text-white p-4 relative">
         <button onclick="closeDetailModal()" class="absolute top-2.5 right-2.5 bg-black/20 hover:bg-black/40 text-white rounded-full p-1.5 transition-all focus:outline-none">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -275,13 +275,13 @@
         <h2 id="modal-event" class="text-xl md:text-2xl font-extrabold tracking-tight mt-1">100m</h2>
       </div>
 
-      <div class="p-3 md:p-5 overflow-y-auto custom-scroll space-y-3 flex-grow">
+      <div class="p-4 overflow-y-auto custom-scroll space-y-3 flex-grow">
         <div class="bg-brandGray rounded-lg p-3 border border-gray-100 text-center relative overflow-hidden flex items-center justify-between px-4">
           <div class="text-left">
             <span class="text-[10px] font-semibold text-gray-400 block uppercase tracking-wider">Rekord</span>
             <span id="modal-type-tag" class="inline-block text-[11px] font-bold text-gray-500 capitalize">Løpsøvelse</span>
           </div>
-          <span id="modal-result" class="text-2xl md:text-4xl font-black text-tealDeep tracking-tight">10,28</span>
+          <span id="modal-result" class="text-2xl md:text-3xl font-black text-tealDeep tracking-tight">10,28</span>
         </div>
 
         <div class="space-y-2 text-xs md:text-sm">
@@ -1012,10 +1012,18 @@
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
 
+    function sendHeightToParent() {
+      setTimeout(() => {
+        var actualHeight = document.documentElement.scrollHeight;
+        window.parent.postMessage({ type: 'resize-iframe', height: actualHeight }, '*');
+      }, 100);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       updateOverviewStats();
       renderRecords();
       setupEventListeners();
+      sendHeightToParent();
     });
 
     function updateOverviewStats() {
@@ -1088,6 +1096,8 @@
       detailModal.addEventListener('click', (e) => {
         if (e.target === detailModal) closeDetailModal();
       });
+
+      window.addEventListener('resize', sendHeightToParent);
     }
 
     function resetFilters() {
@@ -1138,6 +1148,7 @@
         recordsTbody.innerHTML = '';
         recordsCardList.innerHTML = '';
         emptyState.classList.remove('hidden');
+        sendHeightToParent();
         return;
       }
 
@@ -1159,7 +1170,7 @@
         const zebraBg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/40';
 
         rowsHTML += `
-          <tr onclick="openDetailModal('${rec.id}')" class="${zebraBg} hover:bg-orangeWarm/5 cursor-pointer transition-all duration-150 border-b border-gray-100/60">
+          <tr onclick="openDetailModal('${rec.id}', event)" class="${zebraBg} hover:bg-orangeWarm/5 cursor-pointer transition-all duration-150 border-b border-gray-100/60">
             <td class="py-3.5 px-6"><span class="inline-block text-xs font-bold px-2.5 py-0.5 border rounded-full uppercase ${genderColor}">${rec.category}</span></td>
             <td class="py-3.5 px-6 text-gray-900 font-bold text-sm">${highlightText(rec.event, searchFilter)}</td>
             <td class="py-3.5 px-6 font-mono text-orangeWarm font-bold text-base">${highlightText(rec.result, searchFilter)}</td>
@@ -1170,7 +1181,7 @@
         `;
 
         cardsHTML += `
-          <div onclick="openDetailModal('${rec.id}')" class="p-4 active:bg-orangeWarm/5 bg-white transition-all cursor-pointer flex flex-col gap-2.5">
+          <div onclick="openDetailModal('${rec.id}', event)" class="p-4 active:bg-orangeWarm/5 bg-white transition-all cursor-pointer flex flex-col gap-2.5">
             <div class="flex items-center justify-between gap-2">
               <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 border rounded-full uppercase ${genderColor}">${rec.category}</span>
               <div class="flex items-center gap-1.5">${typeBadge}<span class="text-[11px] text-gray-400 font-mono font-medium">${highlightText(rec.date, searchFilter)}</span></div>
@@ -1189,9 +1200,10 @@
 
       recordsTbody.innerHTML = rowsHTML;
       recordsCardList.innerHTML = cardsHTML;
+      sendHeightToParent();
     }
 
-    function openDetailModal(id) {
+    function openDetailModal(id, evt) {
       const rec = records.find(r => r.id === id);
       if (!rec) return;
 
@@ -1232,15 +1244,23 @@
         historicalAlert.classList.add('hidden');
       }
 
+      // Plasser pop-up-en dynamisk nøyaktig der brukeren trykket
+      if (evt && evt.currentTarget) {
+        const clickedTop = evt.currentTarget.offsetTop;
+        detailModal.style.top = Math.max(0, clickedTop - 80) + 'px';
+      } else {
+        detailModal.style.top = '100px';
+      }
+
       detailModal.classList.remove('opacity-0', 'pointer-events-none');
-      modalContent.classList.remove('translate-y-full', 'md:translate-y-4');
+      modalContent.classList.remove('translate-y-full');
       modalContent.classList.add('translate-y-0');
     }
 
     function closeDetailModal() {
       detailModal.classList.add('opacity-0', 'pointer-events-none');
       modalContent.classList.remove('translate-y-0');
-      modalContent.classList.add('translate-y-full', 'md:translate-y-4');
+      modalContent.classList.add('translate-y-full');
       selectedRecord = null;
     }
 
@@ -1319,7 +1339,7 @@
       downloadAnchor.setAttribute("download", `banerekorder_trondheim_stadion.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
-      document.body.removeChild(downloadAnchor);
+      downloadAnchor.removeChild(downloadAnchor);
       showToast('JSON-data generert!');
     }
   </script>
