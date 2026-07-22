@@ -268,9 +268,9 @@
     </section>
   </main>
 
-  <!-- Record Detail Modal (Fast posisjonert for stabil mobil/PC visning) -->
-  <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div id="modal-content" class="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl transform translate-y-4 transition-transform duration-300 flex flex-col max-h-[90vh]">
+  <!-- Record Detail Modal (fixed viewport-locked popup) -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/60 z-[99999] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div id="modal-content" class="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl transform scale-95 transition-all duration-300 flex flex-col max-h-[90vh]">
       <div class="track-bg text-white p-4 relative">
         <button onclick="closeDetailModal()" class="absolute top-2.5 right-2.5 bg-black/20 hover:bg-black/40 text-white rounded-full p-1.5 transition-all focus:outline-none">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -1284,14 +1284,14 @@
       }
 
       detailModal.classList.remove('opacity-0', 'pointer-events-none');
-      modalContent.classList.remove('translate-y-full');
-      modalContent.classList.add('translate-y-0');
+      modalContent.classList.remove('scale-95');
+      modalContent.classList.add('scale-100');
     }
 
     function closeDetailModal() {
       detailModal.classList.add('opacity-0', 'pointer-events-none');
-      modalContent.classList.remove('translate-y-0');
-      modalContent.classList.add('translate-y-full');
+      modalContent.classList.remove('scale-100');
+      modalContent.classList.add('scale-95');
       selectedRecord = null;
     }
 
