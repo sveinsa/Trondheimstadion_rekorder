@@ -80,10 +80,10 @@
     .badge-ny {
       background-color: #dc2626;
       color: #ffffff;
-      font-size: 0.75rem;
+      font-size: 0.6rem;
       font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 1px 4px;
+      border-radius: 3px;
       margin-left: 6px;
       display: inline-block;
       vertical-align: middle;
@@ -93,6 +93,13 @@
       0%   { opacity: 1; }
       50%  { opacity: 0.2; }
       100% { opacity: 1; }
+    }
+
+    .row-utgått {
+      color: #9ca3af !important;
+    }
+    .row-utgått td {
+      color: #9ca3af !important;
     }
   </style>
 </head>
@@ -114,7 +121,7 @@
         <h1 id="app-title" class="text-2xl md:text-4xl font-extrabold tracking-tight">Banerekorder Trondheim Stadion</h1>
         <p id="app-subtitle" class="text-teal-100 font-medium mt-1 flex items-center gap-2 text-sm">
           <span class="inline-block w-2.5 h-2.5 bg-orangeWarm rounded-full pulse-dot"></span>
-          Oppdatert: 22.07.2026
+          Oppdatert: <span id="update-date">22.07.2026</span>
         </p>
       </div>
 
@@ -212,17 +219,24 @@
       </div>
     </div>
 
+    <!-- Loading State -->
+    <div id="loading-state" class="flex flex-col items-center justify-center text-center p-12 bg-white rounded-2xl">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-tealDeep mb-4"></div>
+      <h3 class="text-base font-bold text-gray-800">Laster banerekorder fra Google Sheets...</h3>
+    </div>
+
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
       <div class="hidden md:block overflow-x-auto custom-scroll">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-gray-50/80 border-b border-gray-100 text-xs font-bold uppercase tracking-wider text-gray-500">
               <th class="py-4 px-6 w-[12%]">Kategori</th>
-              <th class="py-4 px-6 w-[20%]">Øvelse</th>
-              <th class="py-4 px-6 w-[15%]">Resultat</th>
-              <th class="py-4 px-6 w-[28%]">Navn</th>
-              <th class="py-4 px-6 w-[15%]">Klubb/Land</th>
+              <th class="py-4 px-6 w-[18%]">Øvelse</th>
+              <th class="py-4 px-6 w-[14%]">Resultat</th>
+              <th class="py-4 px-6 w-[24%]">Navn</th>
+              <th class="py-4 px-6 w-[14%]">Klubb/Land</th>
               <th class="py-4 px-6 w-[10%]">Når</th>
+              <th class="py-4 px-6 w-[8%]">Status</th>
             </tr>
           </thead>
           <tbody id="records-tbody" class="divide-y divide-gray-100 text-sm font-medium text-gray-700"></tbody>
@@ -328,6 +342,18 @@
               <span id="modal-age" class="text-[11px] font-semibold text-gray-500">Satt for 18 år siden</span>
             </div>
           </div>
+          
+          <div class="flex items-center gap-2.5 border-t border-gray-50 pt-2">
+            <div class="bg-tealDeep/10 text-tealDeep p-1.5 rounded-lg flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Status</span>
+              <span id="modal-status" class="font-bold text-gray-800 truncate block">Gjeldende</span>
+            </div>
+          </div>
         </div>
 
         <div id="modal-historical-alert" class="p-2.5 rounded-lg border flex gap-2 bg-orangeWarm/5 border-orangeWarm/20 text-orangeDark hidden">
@@ -372,634 +398,9 @@
 
   <!-- SCRIPT & DATA -->
   <script>
-    const rawRecordsData = [
-      // MENN
-      {
-        category: "Menn",
-        event: "100m",
-        result: "10,28",
-        name: "Jaysuma Saidy Ndure",
-        club: "IL i BUL",
-        date: "18.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "200m",
-        result: "21,16",
-        name: "Mathias Hove Johansen",
-        club: "Idrettslaget Skjalg",
-        date: "23.08.2020",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "400m",
-        result: "46,81",
-        name: "Andreas Grimerud",
-        club: "Moelven IL",
-        date: "21.08.2024",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "600m",
-        result: "1.19,47",
-        name: "Kjetil Brenno Gagnås",
-        club: "Børsa IL",
-        date: "26.06.2020",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "800m",
-        result: "1.49,0",
-        name: "Arne Kvalheim",
-        club: "IK Tjalve",
-        date: "05.08.1966",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "1000m",
-        result: "2.28,8",
-        name: "Per Øystein Saksvik",
-        club: "Ranheim IL",
-        date: "15.06.1974",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "1500m",
-        result: "3.38,60",
-        name: "Kristoffer Sagli",
-        club: "Aure IL",
-        date: "12.05.2025",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "1 mile (1609,33m)",
-        result: "4.12,2",
-        name: "Ola Krangnes",
-        club: "Sunndal IL",
-        date: "17.09.1981",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "3000m",
-        result: "7.55,6",
-        name: "Gordon Pirie",
-        club: "GBR/ENG",
-        date: "22.06.1956",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "5000m",
-        result: "13.56,64",
-        name: "Mathias Flak",
-        club: "Steinkjer FK",
-        date: "27.05.2025",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "10000m",
-        result: "29.20,58",
-        name: "Urige Buta",
-        club: "Haugesund IL",
-        date: "20.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "110m hekk",
-        result: "14,0",
-        name: "Willie Stevens",
-        club: "USA",
-        date: "08.07.1957",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "200m hekk",
-        result: "25,7",
-        name: "Lars Vikan Rise",
-        club: "Nidelv IL",
-        date: "31.08.2005",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "300m hekk",
-        result: "43,9",
-        name: "Ketil Knudsen",
-        club: "Malvik IL",
-        date: "05.10.1977",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "400m hekk",
-        result: "51,32",
-        name: "Andreas Totsås",
-        club: "Vidar",
-        date: "18.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "2000m hinder",
-        result: "5.50,77",
-        name: "Esten Hansen-Møllerud Hauen",
-        club: "FIK Ren-Eng",
-        date: "13.08.2022",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "3000m hinder",
-        result: "8.42,4",
-        name: "Ernst Larsen",
-        club: "Ranheim IL",
-        date: "05.09.1956",
-        type: "løp"
-      },
-      {
-        category: "Menn",
-        event: "4x100m stafett",
-        result: "41,03",
-        name: "Mathias Hove Johansen, Simen Tjelta Larsen, Lars Jøran Storhaug, Matias Sivertsvik",
-        club: "IL Skjalg",
-        date: "21.05.2016",
-        type: "stafett"
-      },
-      {
-        category: "Menn",
-        event: "4x200m stafett",
-        result: "1.29,1",
-        name: "Trond Furuly, Stein Hanssen, Tor Klaussen, Ole Bernt Skarstein",
-        club: "IL Stålkameratene",
-        date: "18.08.1969",
-        type: "stafett"
-      },
-      {
-        category: "Menn",
-        event: "4x400m stafett",
-        result: "3.15,92",
-        name: "Vebjørn Borge, Torbjørn Lysne, Thomas M. Heggøy, Sondre Dingsør",
-        club: "IL Gular",
-        date: "22.05.2016",
-        type: "stafett"
-      },
-      {
-        category: "Menn",
-        event: "4x800m stafett",
-        result: "7.49,6",
-        name: "Jørn Aksel Krog, Tormod Børseth, Harald Inge Børseth, Svein Husby",
-        club: "Strindheim IL",
-        date: "23.09.1968",
-        type: "stafett"
-      },
-      {
-        category: "Menn",
-        event: "4x1500m stafett",
-        result: "15.40,6",
-        name: "Konrad Ystborg, Terje Schr. Nielsen, Knut Kvalheim, Arne Kvalheim",
-        club: "IK Tjalve",
-        date: "06.09.1970",
-        type: "stafett"
-      },
-      {
-        category: "Menn",
-        event: "1000m stafett",
-        result: "1.54,59",
-        name: "Bjørn S. Sommerfeldt, Ole-Thomas Steiro Andersen, Einar Inge Aschim Aasen, Rune Selstad",
-        club: "IF Hellas",
-        date: "01.08.2004",
-        type: "stafett"
-      },
-      {
-        category: "Menn",
-        event: "Høyde",
-        result: "2,13",
-        name: "Kjølv Egeland",
-        club: "IL i BUL",
-        date: "20.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Stav",
-        result: "4,90",
-        name: "Benjamin Jensen",
-        club: "IK Tjalve",
-        date: "18.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Lengde",
-        result: "7,61",
-        name: "Ingar Kiplesund",
-        club: "Trondheim Friidrett",
-        date: "21.06.2020",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Tresteg",
-        result: "15,72",
-        name: "Martin Jensen",
-        club: "IL i BUL",
-        date: "05.08.1966",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Kule",
-        result: "18,24",
-        name: "Gjøran Sørli",
-        club: "IK Tjalve",
-        date: "18.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Diskos",
-        result: "58,65",
-        name: "Gaute Myklebust",
-        club: "Norna-Salhus",
-        date: "19.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Slegge",
-        result: "66,21",
-        name: "Steffen Nerdal",
-        club: "Norna-Salhus",
-        date: "18.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Spyd",
-        result: "72,52",
-        name: "Størk Avelsgaard Lien",
-        club: "Stjørdal FIK",
-        date: "19.08.2012",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "Spyd (gammel type)",
-        result: "79,06",
-        name: "Egil Danielsen",
-        club: "Hamar IL",
-        date: "21.06.1956",
-        type: "teknisk"
-      },
-      {
-        category: "Menn",
-        event: "5-kamp",
-        result: "3715",
-        name: "Hans Bernhard Skaset (6,79-53,05-23,1-43,20-4.16,8)",
-        club: "SK Freidig",
-        date: "31.08.1962",
-        type: "mangekamp"
-      },
-      {
-        category: "Menn",
-        event: "10-kamp",
-        result: "6905",
-        name: "Hans Bernhard Skaset (11,2-6,86-12,38-1,65-50,2/15,8-46,38-3,30-53,89-4.17,8)",
-        club: "SK Freidig",
-        date: "03/04.09.62",
-        type: "mangekamp"
-      },
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJTfRSdDkH0gkmNIevtHcFuZtjYCMcHDahPRi3I2vT6-0PDH5sOQ6hONvO-20Ag_bV/exec";
 
-      // KVINNER
-      {
-        category: "Kvinner",
-        event: "60m",
-        result: "7,7",
-        name: "Liv Olaug Paulsen",
-        club: "IL Viking, Stav.",
-        date: "07.07.1950",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "100m",
-        result: "11,51",
-        name: "Henriette Jæger",
-        club: "Aremark IF",
-        date: "22.08.2020",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "200m",
-        result: "24,27",
-        name: "Marte Pettersen",
-        club: "Trondheim Friidrett",
-        date: "23.08.2020",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "400m",
-        result: "52,52",
-        name: "Henriette Jæger",
-        club: "Aremark IF",
-        date: "22.08.2020",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "600m",
-        result: "1.26,90",
-        name: "Hedda Hynne",
-        club: "IK Tjalve",
-        date: "28.09.2020",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "800m",
-        result: "2.06,18",
-        name: "Ingvill Måkestad",
-        club: "IK Tjalve",
-        date: "19.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "1500m",
-        result: "4.11.13",
-        name: "Ingeborg Østgård",
-        club: "IK Tjalve",
-        date: "21.08.2024",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "1 mile (1609,33m)",
-        result: "4.57,1",
-        name: "Ingrid Christensen (Kristiansen)",
-        club: "SK Freidig",
-        date: "15.05.1979",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "3000m",
-        result: "9.15,65",
-        name: "Ingeborg Østgård",
-        club: "IK Tjalve",
-        date: "19.09.2023",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "5000m",
-        result: "16.08,22",
-        name: "Karoline Bjerkeli Grøvdal",
-        club: "Isfjorden IL",
-        date: "20.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "10000m",
-        result: "33.23,4",
-        name: "Ingrid Christensen (Kristiansen)",
-        club: "SK Freidig",
-        date: "05.10.1978",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "100m hekk",
-        result: "13,20",
-        name: "Christina Vukicevic",
-        club: "Ski IL",
-        date: "19.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "200m hekk",
-        result: "29,24",
-        name: "Marte Maria Doeven Forven Jermstad",
-        club: "Selsbakk IF",
-        date: "28.08.2013",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "300m hekk",
-        result: "41,95",
-        name: "Hannah Rebekah Murai-Ubby",
-        club: "Ranheim IL",
-        date: "12.08.2022",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "400m hekk",
-        result: "58,46",
-        name: "Benedicte Hauge",
-        club: "Kristiansand IF",
-        date: "18.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "2000m hinder",
-        result: "6.41,56",
-        name: "Thea Charlotte Knutsen",
-        club: "Varegg IL",
-        date: "04.09.2021",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "3000m hinder",
-        result: "10.22,17",
-        name: "Silje Fjørtoft",
-        club: "SK Vidar",
-        date: "19.07.2008",
-        type: "løp"
-      },
-      {
-        category: "Kvinner",
-        event: "4x100m stafett",
-        result: "45,60",
-        name: "Vilde Aasmo, Ida Bakke Hansen, Agathe Holtan Wathne, Nathalie O. Johnsen",
-        club: "Sandnes IL",
-        date: "22.05.2016",
-        type: "stafett"
-      },
-      {
-        category: "Kvinner",
-        event: "4x200m stafett",
-        result: "1.46,1",
-        name: "Marit Prøsch, Gunn Elin Sørensen, Gretha S. Gustavsen, Toril Husby",
-        club: "Nidelv IL",
-        date: "17.06.1974",
-        type: "stafett"
-      },
-      {
-        category: "Kvinner",
-        event: "4x400m stafett",
-        result: "3.47,81",
-        name: "Malin Edland, Kaja Rolfsen, Synne Frydenlund, Josefine Tomine Eriksen",
-        club: "Larvik Turn",
-        date: "21.05.2016",
-        type: "stafett"
-      },
-      {
-        category: "Kvinner",
-        event: "3x800m stafett",
-        result: "6.44,5",
-        name: "Helle Hexeberg, Lene Hestdal, Gro Reinhardt",
-        club: "IL Tyrving",
-        date: "10.09.1977",
-        type: "stafett"
-      },
-      {
-        category: "Kvinner",
-        event: "1000m stafett",
-        result: "2.10,43",
-        name: "Stine Kufaas, Trine Sjaastad, Stine M. Tomb, Cecilie Benedicte Isern",
-        club: "Trondheim FIK",
-        date: "20.07.2008",
-        type: "stafett"
-      },
-      {
-        category: "Kvinner",
-        event: "Høyde",
-        result: "1,92",
-        name: "Tonje Angelsen",
-        club: "Trondheim FIK",
-        date: "01.07.2013",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "Stav",
-        result: "4,30",
-        name: "Cathrine Larsåsen",
-        club: "IL i BUL",
-        date: "19.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "Lengde",
-        result: "6,33",
-        name: "Margrethe Renstrøm",
-        club: "IK Tjalve",
-        date: "19.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "Tresteg",
-        result: "12,83",
-        name: "Mia Haave",
-        club: "Tyrving",
-        date: "18.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "Kule",
-        result: "13,98",
-        name: "Yasuko Matsuda",
-        club: "JAPAN",
-        date: "05.08.1960",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "Diskos",
-        result: "51,69",
-        name: "Grete Etholm Snyder",
-        club: "IK Tjalve",
-        date: "20.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "Slegge",
-        result: "63,61",
-        name: "Mona Christine Holm",
-        club: "IK Tjalve",
-        date: "19.07.2008",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "Spyd",
-        result: "50,74",
-        name: "Maria Børstad Jensen",
-        club: "Stjørdal FIK",
-        date: "27.05.2018",
-        type: "teknisk"
-      },
-      {
-        category: "Kvinner",
-        event: "3-kamp",
-        result: "2612",
-        name: "Anne Lise Wærness (Wraa) (13,1-41,74-1,65)",
-        club: "SK Freidig",
-        date: "20.06.1969",
-        type: "mangekamp"
-      },
-      {
-        category: "Kvinner",
-        event: "5-kamp",
-        result: "3684",
-        name: "Hilde Fredriksen (14,2-9,20-1,57/5,65-2.18,4)",
-        club: "Grorud IL",
-        date: "10/11.09.77",
-        type: "mangekamp"
-      },
-      {
-        category: "Kvinner",
-        event: "7-kamp",
-        result: "4995",
-        name: "Frida Thorsås (15,62-1,57-12,29-26,41/5,52-32,94-2,17,91)",
-        club: "Urædd Friidrett",
-        date: "11/12.09.10",
-        type: "mangekamp"
-      }
-    ];
-
-    // System Logikk
-    const records = rawRecordsData.map((rec, i) => {
-      const raw = rec.result || '';
-      const hasNyTag = /\b(ny|nm2026)\b/i.test(raw);
-      const cleanMark = raw.replace(/\b(ny|nm2026)\b/gi, '').trim();
-
-      return {
-        id: `rec-${i}`,
-        category: rec.category,
-        event: rec.event,
-        cleanResult: cleanMark,
-        result: hasNyTag ? `${cleanMark} <span class="badge-ny">NM2026</span>` : cleanMark,
-        name: rec.name,
-        club: rec.club,
-        date: rec.date,
-        type: rec.type
-      };
-    });
-
+    let records = [];
     let searchFilter = '';
     let genderFilter = 'alle';
     let typeFilter = 'alle';
@@ -1010,6 +411,7 @@
     const recordsTbody = document.getElementById('records-tbody');
     const recordsCardList = document.getElementById('records-card-list');
     const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
     const filteredCountText = document.getElementById('filtered-count');
     const totalCountText = document.getElementById('total-count');
     const detailModal = document.getElementById('detail-modal');
@@ -1025,11 +427,109 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      updateOverviewStats();
-      renderRecords();
       setupEventListeners();
-      sendHeightToParent();
+      fetchRecords();
     });
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      dateStr = String(dateStr).trim();
+      
+      if (/^\d{1,2}\.\d{1,2}\.\d{2,4}$/.test(dateStr)) {
+        return dateStr;
+      }
+
+      const parsed = new Date(dateStr);
+      if (!isNaN(parsed.getTime())) {
+        const day = String(parsed.getDate()).padStart(2, '0');
+        const month = String(parsed.getMonth() + 1).padStart(2, '0');
+        const year = parsed.getFullYear();
+        return `${day}.${month}.${year}`;
+      }
+
+      const isoMatch = dateStr.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+      if (isoMatch) {
+        const [, year, month, day] = isoMatch;
+        return `${String(day).padStart(2, '0')}.${String(month).padStart(2, '0')}.${year}`;
+      }
+
+      return dateStr;
+    }
+
+    function detectRecordType(eventStr) {
+      if (!eventStr) return 'løp';
+      const ev = eventStr.toLowerCase();
+      if (ev.includes('hekk')) return 'løp';
+      if (ev.includes('stafett')) return 'stafett';
+      if (ev.includes('5-kamp') || ev.includes('7-kamp') || ev.includes('10-kamp') || ev.includes('kamp')) return 'mangekamp';
+      if (ev.includes('høyde') || ev.includes('stav') || ev.includes('lengde') || ev.includes('tresteg') || 
+          ev.includes('kule') || ev.includes('diskos') || ev.includes('slegge') || ev.includes('spyd')) {
+        return 'teknisk';
+      }
+      return 'løp';
+    }
+
+    async function fetchRecords() {
+      try {
+        const response = await fetch(SCRIPT_URL);
+        const data = await response.json();
+        
+        records = data.map((rec, i) => {
+          const cleanMark = String(rec.result || '').trim();
+          const rawStatus = String(rec.status || '').trim();
+          const statusLower = rawStatus.toLowerCase();
+          
+          let displayStatus = 'Gjeldende';
+          if (statusLower === 'ny') displayStatus = 'Ny';
+          else if (statusLower === 'utgått') displayStatus = 'Utgått';
+          else if (rawStatus) displayStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
+
+          let resultHtml = cleanMark;
+          if (statusLower === 'ny') {
+            resultHtml = `${cleanMark} <span class="badge-ny">NM2026</span>`;
+          }
+
+          const formattedDate = formatDate(rec.date || '');
+          const eventName = rec.event || '';
+          const inferredType = detectRecordType(eventName);
+
+          return {
+            id: `rec-${i}`,
+            category: rec.category || '',
+            event: eventName,
+            cleanResult: cleanMark,
+            result: resultHtml,
+            name: rec.name || '',
+            club: rec.club || '',
+            date: formattedDate,
+            type: inferredType,
+            status: statusLower,
+            displayStatus: displayStatus
+          };
+        });
+
+        loadingState.style.display = 'none';
+        updateOverviewStats();
+        renderRecords();
+        sendHeightToParent();
+      } catch (err) {
+        console.error('Feil ved henting av data:', err);
+        loadingState.innerHTML = `
+          <div class="text-red-500 font-bold">Kunne ikke laste banerekorder fra Google Sheets. Vennligst sjekk tilkoblingen din.</div>
+          <button onclick="fetchRetry()" class="mt-4 px-4 py-2 bg-tealDeep text-white text-xs font-bold rounded-lg">Prøv igjen</button>
+        `;
+        sendHeightToParent();
+      }
+    }
+
+    function fetchRetry() {
+      loadingState.style.display = 'flex';
+      loadingState.innerHTML = `
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-tealDeep mb-4"></div>
+        <h3 class="text-base font-bold text-gray-800">Laster banerekorder fra Google Sheets...</h3>
+      `;
+      fetchRecords();
+    }
 
     function parseDateObj(dateStr) {
       if (!dateStr) return null;
@@ -1043,9 +543,11 @@
     }
 
     function updateOverviewStats() {
-      const menn = records.filter(r => r.category === 'Menn').length;
-      const kvinner = records.filter(r => r.category === 'Kvinner').length;
-      const total = records.length;
+      // Ignorer rekorder med status == "utgått" i statistikken, tell kun Gjeldende og Ny
+      const activeRecords = records.filter(r => r.status !== 'utgått');
+      const menn = activeRecords.filter(r => r.category.toLowerCase() === 'menn').length;
+      const kvinner = activeRecords.filter(r => r.category.toLowerCase() === 'kvinner').length;
+      const total = activeRecords.length;
 
       document.getElementById('stat-total').textContent = total;
       totalCountText.textContent = total;
@@ -1059,7 +561,7 @@
       let minTimestamp = Infinity;
       let maxTimestamp = -Infinity;
 
-      records.forEach(r => {
+      activeRecords.forEach(r => {
         const d = parseDateObj(r.date);
         if (d) {
           const time = d.getTime();
@@ -1128,8 +630,6 @@
       detailModal.addEventListener('click', (e) => {
         if (e.target === detailModal) closeDetailModal();
       });
-
-
     }
 
     function resetFilters() {
@@ -1163,12 +663,13 @@
     function renderRecords() {
       const filtered = records.filter(rec => {
         if (genderFilter !== 'alle') {
-          if (genderFilter === 'menn' && rec.category !== 'Menn') return false;
-          if (genderFilter === 'kvinner' && rec.category !== 'Kvinner') return false;
+          const cat = rec.category.toLowerCase();
+          if (genderFilter === 'menn' && !cat.includes('menn')) return false;
+          if (genderFilter === 'kvinner' && !cat.includes('kvinn')) return false;
         }
         if (typeFilter !== 'alle' && rec.type !== typeFilter) return false;
         if (searchFilter) {
-          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
+          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date} ${rec.displayStatus}`.toLowerCase();
           if (!cleanTarget.includes(searchFilter)) return false;
         }
         return true;
@@ -1190,8 +691,10 @@
       let cardsHTML = '';
 
       filtered.forEach((rec, idx) => {
-        const isMen = rec.category === 'Menn';
+        const isMen = rec.category.toLowerCase().includes('menn');
         const genderColor = isMen ? 'tag-menn border-transparent' : 'tag-kvinner border-transparent';
+        const isUtgått = rec.status === 'utgått';
+        const rowClass = isUtgått ? 'row-utgått' : '';
         
         let typeBadge = '';
         if (rec.type === 'løp') typeBadge = `<span class="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md border border-blue-100 uppercase">Løp</span>`;
@@ -1202,29 +705,33 @@
         const zebraBg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/40';
 
         rowsHTML += `
-          <tr onclick="openDetailModal('${rec.id}', event)" class="${zebraBg} hover:bg-orangeWarm/5 cursor-pointer transition-all duration-150 border-b border-gray-100/60">
+          <tr onclick="openDetailModal('${rec.id}', event)" class="${zebraBg} ${rowClass} hover:bg-orangeWarm/5 cursor-pointer transition-all duration-150 border-b border-gray-100/60">
             <td class="py-3.5 px-6"><span class="inline-block text-xs font-bold px-2.5 py-0.5 border rounded-full uppercase ${genderColor}">${rec.category}</span></td>
-            <td class="py-3.5 px-6 text-gray-900 font-bold text-sm">${highlightText(rec.event, searchFilter)}</td>
-            <td class="py-3.5 px-6 font-mono text-orangeWarm font-bold text-base">${highlightText(rec.result, searchFilter)}</td>
-            <td class="py-3.5 px-6 text-gray-800 font-semibold text-sm max-w-xs truncate" title="${rec.name}">${highlightText(rec.name, searchFilter)}</td>
-            <td class="py-3.5 px-6 text-gray-500 text-sm max-w-[150px] truncate" title="${rec.club}">${highlightText(rec.club, searchFilter)}</td>
-            <td class="py-3.5 px-6 text-gray-400 font-mono text-xs">${highlightText(rec.date, searchFilter)}</td>
+            <td class="py-3.5 px-6 font-bold text-sm ${isUtgått ? 'text-gray-400' : 'text-gray-900'}">${highlightText(rec.event, searchFilter)}</td>
+            <td class="py-3.5 px-6 font-mono font-bold text-base whitespace-nowrap ${isUtgått ? 'text-gray-400' : 'text-orangeWarm'}">${highlightText(rec.result, searchFilter)}</td>
+            <td class="py-3.5 px-6 font-semibold text-sm max-w-xs truncate ${isUtgått ? 'text-gray-400' : 'text-gray-800'}" title="${rec.name}">${highlightText(rec.name, searchFilter)}</td>
+            <td class="py-3.5 px-6 text-sm max-w-[150px] truncate ${isUtgått ? 'text-gray-400' : 'text-gray-500'}" title="${rec.club}">${highlightText(rec.club, searchFilter)}</td>
+            <td class="py-3.5 px-6 font-mono text-xs ${isUtgått ? 'text-gray-400' : 'text-gray-400'}">${highlightText(rec.date, searchFilter)}</td>
+            <td class="py-3.5 px-6 text-xs font-semibold ${isUtgått ? 'text-gray-400' : 'text-gray-600'}">${highlightText(rec.displayStatus, searchFilter)}</td>
           </tr>
         `;
 
         cardsHTML += `
-          <div onclick="openDetailModal('${rec.id}', event)" class="p-4 active:bg-orangeWarm/5 bg-white transition-all cursor-pointer flex flex-col gap-2.5">
+          <div onclick="openDetailModal('${rec.id}', event)" class="p-4 active:bg-orangeWarm/5 bg-white transition-all cursor-pointer flex flex-col gap-2.5 ${rowClass}">
             <div class="flex items-center justify-between gap-2">
               <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 border rounded-full uppercase ${genderColor}">${rec.category}</span>
               <div class="flex items-center gap-1.5">${typeBadge}<span class="text-[11px] text-gray-400 font-mono font-medium">${highlightText(rec.date, searchFilter)}</span></div>
             </div>
             <div class="flex items-baseline justify-between gap-4">
-              <h4 class="text-sm font-bold text-gray-900">${highlightText(rec.event, searchFilter)}</h4>
-              <span class="text-base font-extrabold text-orangeWarm font-mono whitespace-nowrap">${highlightText(rec.result, searchFilter)}</span>
+              <h4 class="text-sm font-bold ${isUtgått ? 'text-gray-400' : 'text-gray-900'}">${highlightText(rec.event, searchFilter)}</h4>
+              <span class="text-base font-extrabold whitespace-nowrap ${isUtgått ? 'text-gray-400' : 'text-orangeWarm'} font-mono">${highlightText(rec.result, searchFilter)}</span>
             </div>
-            <div class="flex flex-col gap-0.5">
-              <span class="text-xs font-semibold text-gray-700">${highlightText(rec.name, searchFilter)}</span>
-              <span class="text-[11px] text-gray-400 font-medium">${highlightText(rec.club, searchFilter)}</span>
+            <div class="flex items-center justify-between">
+              <div class="flex flex-col gap-0.5">
+                <span class="text-xs font-semibold ${isUtgått ? 'text-gray-400' : 'text-gray-700'}">${highlightText(rec.name, searchFilter)}</span>
+                <span class="text-[11px] text-gray-400 font-medium">${highlightText(rec.club, searchFilter)}</span>
+              </div>
+              <span class="text-[11px] font-semibold ${isUtgått ? 'text-gray-400' : 'text-gray-500'}">Status: ${highlightText(rec.displayStatus, searchFilter)}</span>
             </div>
           </div>
         `;
@@ -1245,10 +752,11 @@
       document.getElementById('modal-athlete').innerHTML = rec.name;
       document.getElementById('modal-club').innerHTML = rec.club;
       document.getElementById('modal-date').innerHTML = rec.date;
+      document.getElementById('modal-status').innerHTML = rec.displayStatus === 'Ny' ? 'Ny rekord' : rec.displayStatus;
       
       const badge = document.getElementById('modal-category-badge');
       badge.textContent = rec.category;
-      badge.className = rec.category === 'Menn' 
+      badge.className = rec.category.toLowerCase().includes('menn') 
         ? "px-2 py-0.5 text-[9px] md:text-[10px] font-extrabold uppercase bg-sky-500 text-white tracking-widest rounded-full" 
         : "px-2 py-0.5 text-[9px] md:text-[10px] font-extrabold uppercase bg-rose-500 text-white tracking-widest rounded-full";
 
@@ -1298,7 +806,7 @@
     function copyRecordText() {
       if (!selectedRecord) return;
       const rec = selectedRecord;
-      const textToCopy = `Banerekord Trondheim Stadion (${rec.category}): ${rec.event} - ${rec.cleanResult} satt av ${rec.name} (${rec.club}) den ${rec.date}.`;
+      const textToCopy = `Banerekord Trondheim Stadion (${rec.category}): ${rec.event} - ${rec.cleanResult} satt av ${rec.name} (${rec.club}) den ${rec.date} [Status: ${rec.displayStatus}].`;
       navigator.clipboard.writeText(textToCopy).then(() => showToast('Rekorddata ble kopiert!'));
     }
 
@@ -1311,21 +819,22 @@
     function exportCSV() {
       const activeFiltered = records.filter(rec => {
         if (genderFilter !== 'alle') {
-          if (genderFilter === 'menn' && rec.category !== 'Menn') return false;
-          if (genderFilter === 'kvinner' && rec.category !== 'Kvinner') return false;
+          const cat = rec.category.toLowerCase();
+          if (genderFilter === 'menn' && !cat.includes('menn')) return false;
+          if (genderFilter === 'kvinner' && !cat.includes('kvinn')) return false;
         }
         if (typeFilter !== 'alle' && rec.type !== typeFilter) return false;
         if (searchFilter) {
-          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
+          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date} ${rec.displayStatus}`.toLowerCase();
           if (!cleanTarget.includes(searchFilter)) return false;
         }
         return true;
       });
 
-      let csvContent = "data:text/csv;charset=utf-8,Kategori;Øvelse;Resultat;Navn;Klubb/Land;Når\r\n";
+      let csvContent = "data:text/csv;charset=utf-8,Kategori;Øvelse;Resultat;Navn;Klubb/Land;Når;Status\r\n";
       activeFiltered.forEach(rec => {
-        const row = [rec.category, rec.event, rec.cleanResult, rec.name, rec.club, rec.date]
-          .map(val => `"${val.replace(/"/g, '""')}"`)
+        const row = [rec.category, rec.event, rec.cleanResult, rec.name, rec.club, rec.date, rec.displayStatus]
+          .map(val => `"${String(val).replace(/"/g, '""')}"`)
           .join(";");
         csvContent += row + "\r\n";
       });
@@ -1343,12 +852,13 @@
     function exportJSON() {
       const activeFiltered = records.filter(rec => {
         if (genderFilter !== 'alle') {
-          if (genderFilter === 'menn' && rec.category !== 'Menn') return false;
-          if (genderFilter === 'kvinner' && rec.category !== 'Kvinner') return false;
+          const cat = rec.category.toLowerCase();
+          if (genderFilter === 'menn' && !cat.includes('menn')) return false;
+          if (genderFilter === 'kvinner' && !cat.includes('kvinn')) return false;
         }
         if (typeFilter !== 'alle' && rec.type !== typeFilter) return false;
         if (searchFilter) {
-          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date}`.toLowerCase();
+          const cleanTarget = `${rec.event} ${rec.cleanResult} ${rec.name} ${rec.club} ${rec.date} ${rec.displayStatus}`.toLowerCase();
           if (!cleanTarget.includes(searchFilter)) return false;
         }
         return true;
@@ -1361,6 +871,7 @@
         name: rec.name,
         club: rec.club,
         date: rec.date,
+        status: rec.displayStatus,
         type: rec.type
       }));
 
