@@ -471,20 +471,21 @@
 
     async function fetchRecords() {
       try {
-        const response = await fetch(SCRIPT_URL);
+        // Tvinger nettleseren til å alltid hente fersk JSON-data fra Google Sheets (fjerner JSON-cache)
+        const response = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
         const data = await response.json();
         
         records = data
           .map((rec, i) => {
-            const rawStatus = String(rec.status || '').trim();
+            const rawStatus = String(rec.status || rec.Status || rec.STATUS || '').trim();
             const statusLower = rawStatus.toLowerCase();
             
-            // FILTRERING KUN GJELDENDE, UTGÅTT, ELLER NY (Eksakt match, store/små bokstaver ignoreres)
+            // STRENGT FILTER: Hvis status ikke er nøyaktig en av disse, ignoreres rekorden.
             if (!['gjeldende', 'utgått', 'ny'].includes(statusLower)) {
               return null;
             }
 
-            const cleanMark = String(rec.result || '').trim();
+            const cleanMark = String(rec.result || rec.Result || '').trim();
             
             let displayStatus = 'Gjeldende';
             if (statusLower === 'ny') displayStatus = 'Ny';
@@ -496,18 +497,18 @@
               resultHtml = `${cleanMark} <span class="badge-ny">NM2026</span>`;
             }
 
-            const formattedDate = formatDate(rec.date || '');
-            const eventName = rec.event || '';
+            const formattedDate = formatDate(rec.date || rec.Date || '');
+            const eventName = rec.event || rec.Event || '';
             const inferredType = detectRecordType(eventName);
 
             return {
               id: `rec-${i}`,
-              category: rec.category || '',
+              category: rec.category || rec.Category || '',
               event: eventName,
               cleanResult: cleanMark,
               result: resultHtml,
-              name: rec.name || '',
-              club: rec.club || '',
+              name: rec.name || rec.Name || '',
+              club: rec.club || rec.Club || '',
               date: formattedDate,
               type: inferredType,
               status: statusLower,
@@ -555,12 +556,12 @@
       const activeRecords = records.filter(r => r.status !== 'utgått');
       const menn = activeRecords.filter(r => r.category.toLowerCase() === 'menn').length;
       const kvinner = activeRecords.filter(r => r.category.toLowerCase() === 'kvinner').length;
-      const total = activeRecords.length;
+      const totalActive = activeRecords.length;
 
-      document.getElementById('stat-total').textContent = total;
-      totalCountText.textContent = total;
+      document.getElementById('stat-total').textContent = totalActive;
+      totalCountText.textContent = records.length;
 
-      document.getElementById('tab-alle').textContent = `Alle (${total})`;
+      document.getElementById('tab-alle').textContent = `Alle (${totalActive})`;
       document.getElementById('tab-menn').textContent = `Menn (${menn})`;
       document.getElementById('tab-kvinner').textContent = `Kvinner (${kvinner})`;
 
