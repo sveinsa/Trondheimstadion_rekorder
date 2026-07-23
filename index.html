@@ -477,16 +477,19 @@
         records = data
           .map((rec, i) => {
             const rawStatus = String(rec.status || '').trim();
-            // Hvis status mangler helt, hoppes rekorden over (synkes ikke til hjemmesiden)
-            if (!rawStatus) return null;
+            const statusLower = rawStatus.toLowerCase();
+            
+            // FILTRERING KUN GJELDENDE, UTGÅTT, ELLER NY (Eksakt match, store/små bokstaver ignoreres)
+            if (!['gjeldende', 'utgått', 'ny'].includes(statusLower)) {
+              return null;
+            }
 
             const cleanMark = String(rec.result || '').trim();
-            const statusLower = rawStatus.toLowerCase();
             
             let displayStatus = 'Gjeldende';
             if (statusLower === 'ny') displayStatus = 'Ny';
             else if (statusLower === 'utgått') displayStatus = 'Utgått';
-            else if (rawStatus) displayStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
+            else if (statusLower === 'gjeldende') displayStatus = 'Gjeldende';
 
             let resultHtml = cleanMark;
             if (statusLower === 'ny') {
