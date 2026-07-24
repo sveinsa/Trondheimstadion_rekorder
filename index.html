@@ -191,18 +191,25 @@
       </div>
  
       <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-t border-gray-100 pt-4">
-        <div class="flex bg-gray-100 p-1 rounded-full" id="gender-tabs">
+        <div class="flex bg-gray-100 p-1 rounded-full flex-shrink-0" id="gender-tabs">
           <button data-value="alle" id="tab-alle" class="gender-tab active px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all">Alle (-)</button>
           <button data-value="menn" id="tab-menn" class="gender-tab px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all">Menn (-)</button>
           <button data-value="kvinner" id="tab-kvinner" class="gender-tab px-6 py-1.5 rounded-full text-xs font-bold uppercase transition-all">Kvinner (-)</button>
         </div>
 
-        <div class="flex flex-wrap gap-1.5" id="type-pills">
+        <div class="flex flex-wrap items-center gap-1.5" id="type-pills">
           <button data-type="alle" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all bg-tealDeep text-white border-tealDeep">Alle øvelser</button>
           <button data-type="løp" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Løp</button>
           <button data-type="teknisk" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Teknisk</button>
           <button data-type="stafett" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Stafetter</button>
           <button data-type="mangekamp" class="type-pill px-3.5 py-1.5 text-xs font-semibold rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all">Mangekamp</button>
+          
+          <div class="hidden sm:block w-px h-6 bg-gray-200 mx-1"></div>
+          
+          <button id="btn-nm2026" class="px-3.5 py-1.5 text-xs font-bold rounded-full border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 transition-all flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse block"></span>
+            NM2026
+          </button>
         </div>
       </div>
     </div>
@@ -404,6 +411,7 @@
     let searchFilter = '';
     let genderFilter = 'alle';
     let typeFilter = 'alle';
+    let filterNM2026 = false;
     let selectedRecord = null;
 
     const searchInput = document.getElementById('search-input');
@@ -639,6 +647,25 @@
         });
       });
 
+      const nmButton = document.getElementById('btn-nm2026');
+      if (nmButton) {
+        nmButton.addEventListener('click', () => {
+          filterNM2026 = !filterNM2026;
+          
+          const dot = nmButton.querySelector('span');
+          if (filterNM2026) {
+            nmButton.classList.remove('bg-red-50', 'text-red-600', 'border-red-200', 'hover:bg-red-100');
+            nmButton.classList.add('bg-red-600', 'text-white', 'border-red-600', 'hover:bg-red-700');
+            if(dot) dot.classList.replace('bg-red-600', 'bg-white');
+          } else {
+            nmButton.classList.add('bg-red-50', 'text-red-600', 'border-red-200', 'hover:bg-red-100');
+            nmButton.classList.remove('bg-red-600', 'text-white', 'border-red-600', 'hover:bg-red-700');
+            if(dot) dot.classList.replace('bg-white', 'bg-red-600');
+          }
+          renderRecords();
+        });
+      }
+
       detailModal.addEventListener('click', (e) => {
         if (e.target === detailModal) closeDetailModal();
       });
@@ -648,10 +675,22 @@
       searchInput.value = '';
       searchFilter = '';
       clearSearchBtn.classList.add('hidden');
+      
       const firstTab = document.querySelector('.gender-tab[data-value="alle"]');
       if (firstTab) firstTab.click();
+      
       const firstPill = document.querySelector('.type-pill[data-type="alle"]');
       if (firstPill) firstPill.click();
+
+      filterNM2026 = false;
+      const nmButton = document.getElementById('btn-nm2026');
+      if (nmButton) {
+        nmButton.classList.add('bg-red-50', 'text-red-600', 'border-red-200', 'hover:bg-red-100');
+        nmButton.classList.remove('bg-red-600', 'text-white', 'border-red-600', 'hover:bg-red-700');
+        const dot = nmButton.querySelector('span');
+        if(dot) dot.classList.replace('bg-white', 'bg-red-600');
+      }
+
       renderRecords();
       showToast('Alle filtre ble nullstilt.');
     }
@@ -674,6 +713,8 @@
 
     function renderRecords() {
       const filtered = records.filter(rec => {
+        if (filterNM2026 && rec.status !== 'ny') return false;
+
         if (genderFilter !== 'alle') {
           const cat = rec.category.toLowerCase();
           if (genderFilter === 'menn' && !cat.includes('menn')) return false;
@@ -830,6 +871,8 @@
 
     function exportCSV() {
       const activeFiltered = records.filter(rec => {
+        if (filterNM2026 && rec.status !== 'ny') return false;
+
         if (genderFilter !== 'alle') {
           const cat = rec.category.toLowerCase();
           if (genderFilter === 'menn' && !cat.includes('menn')) return false;
@@ -863,6 +906,8 @@
 
     function exportJSON() {
       const activeFiltered = records.filter(rec => {
+        if (filterNM2026 && rec.status !== 'ny') return false;
+
         if (genderFilter !== 'alle') {
           const cat = rec.category.toLowerCase();
           if (genderFilter === 'menn' && !cat.includes('menn')) return false;
